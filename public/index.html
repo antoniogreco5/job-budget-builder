@@ -585,13 +585,13 @@ a:hover { text-decoration:underline; color:var(--purple-bright); }
         </div>
       </div>
       <div class="tabs" style="max-width:340px;">
-        <button class="tab-btn active" onclick="setBreakdownMode('scope')" id="bdTabScope">Scope Paste</button>
-        <button class="tab-btn" onclick="setBreakdownMode('manual')" id="bdTabManual">Add Items</button>
+        <button class="tab-btn active" onclick="setBreakdownMode('scope')" id="bdTabScope">Paste & Organize</button>
+        <button class="tab-btn" onclick="setBreakdownMode('manual')" id="bdTabManual">Manual Items</button>
       </div>
       <!-- Scope mode -->
       <div id="bdScopeMode" class="card">
-        <p style="font-size:0.85rem;color:var(--text-2);margin-bottom:10px;">Paste or type your full scope of work. You can organize it into budget items afterwards.</p>
-        <textarea class="scope-area" id="scopeText" placeholder="Paste the full scope of work here... e.g. 'Build 3 silicone prosthetic appliances for hero character: forehead, chin, and nose. Includes lifecast, sculpture, mold making, foam latex run, and paint. Need 2 hero sets and 1 backup. Production dates: March 15-20.'" oninput="updateScope()"></textarea>
+        <p style="font-size:0.85rem;color:var(--text-2);margin-bottom:10px;">Paste your scope, breakdown, or call sheet. Lines without dashes become items — dashed lines underneath become the description for that item.</p>
+        <textarea class="scope-area" id="scopeText" placeholder="Scene 4 Dr Josh&#10;-Lifecast&#10;-Silicone appliance&#10;-Paint & finish&#10;&#10;Scene 7 Creature&#10;-Full suit build&#10;-Mechanical jaw&#10;-Epoxy shell" oninput="updateScope()"></textarea>
         <div style="margin-top:14px;display:flex;gap:8px;">
           <button class="btn btn-secondary" onclick="parseScope()">Organize into Items</button>
         </div>
@@ -620,8 +620,12 @@ a:hover { text-decoration:underline; color:var(--purple-bright); }
       </div>
       <!-- Mini Summary Bar -->
       <div class="mini-summary" id="miniSummary"></div>
-      <!-- Item Pills -->
-      <div class="item-pills" id="itemPills"></div>
+      <!-- Item Filter -->
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+        <label class="form-label" style="margin:0;white-space:nowrap;">Showing</label>
+        <select class="form-select" id="itemFilter" onchange="selectBudgetItem(parseInt(this.value))" style="max-width:280px;font-weight:600;"></select>
+        <button class="btn btn-ghost btn-sm" onclick="addBudgetItem()">+ Add Item</button>
+      </div>
       <!-- Item Header (name, desc, markup, costs) -->
       <div id="itemHeaderArea"></div>
       <!-- Editor Tabs: Materials | Labor -->
@@ -1424,19 +1428,53 @@ function parseScope() {
   const j = getJob(); if (!j) return;
   const text = j.scope || '';
   if (!text.trim()) { toast('Enter scope text first'); return; }
-  const lines = text.split('\n').filter(l => l.trim().length > 3);
-  if (lines.length === 0) { toast('No items found in scope'); return; }
-  // Create an item for each meaningful line
+
+  // Parse hierarchical: lines without leading dash/bullet = headings (items)
+  // Lines with leading dash/bullet = sub-items (become description for preceding heading)
+  const lines = text.split('\n').filter(l => l.trim().length > 0);
+  let currentHeading = null;
+  let currentSubs = [];
+  let created = 0;
+
+  function flushItem() {
+    if (!currentHeading) return;
+    const name = currentHeading.trim().substring(0, 60);
+    if (!j.items.find(i => i.name.toLowerCase() === name.toLowerCase())) {
+      j.items.push({ id: uid(), name, description: currentSubs.join('\n'), materials: [], labor: [], markupPct: 0 });
+      created++;
+    }
+    currentHeading = null;
+    currentSubs = [];
+  }
+
   lines.forEach(line => {
-    const name = line.trim().replace(/^[-•*\d.)\s]+/, '').trim();
-    if (name && !j.items.find(i => i.name.toLowerCase() === name.toLowerCase())) {
-      j.items.push({ id: uid(), name: name.substring(0, 60), description: line.trim(), materials: [], labor: [], markupPct: 0 });
+    const trimmed = line.trim();
+    const isDashed = /^[-•*]/.test(trimmed);
+    if (isDashed) {
+      // Sub-item — attach to current heading
+      const clean = trimmed.replace(/^[-•*]\s*/, '');
+      if (currentHeading) {
+        currentSubs.push(clean);
+      } else {
+        // No heading yet — treat as its own item
+        if (!j.items.find(i => i.name.toLowerCase() === clean.toLowerCase())) {
+          j.items.push({ id: uid(), name: clean.substring(0, 60), description: '', materials: [], labor: [], markupPct: 0 });
+          created++;
+        }
+      }
+    } else {
+      // Heading line — flush previous and start new
+      flushItem();
+      currentHeading = trimmed;
     }
   });
+  flushItem(); // flush last one
+
+  if (created === 0) { toast('No new items found — check format'); return; }
   autoSave();
   setBreakdownMode('manual');
   renderBreakdownItems();
-  toast(`${lines.length} items created from scope`);
+  toast(created + ' item' + (created !== 1 ? 's' : '') + ' created');
 }
 
 function renderBreakdownItems() {
@@ -1490,7 +1528,7 @@ function renderBudget() {
   const j = getJob(); if (!j) return;
   renderJobInfoBar('budgetJobInfo');
   renderMiniSummary();
-  renderItemPills();
+  renderItemFilter();
   renderItemHeader();
   renderEditorTabs();
   renderEditorPanel();
@@ -1507,14 +1545,13 @@ function renderMiniSummary() {
     <div class="ms-item profit"><div class="ms-label">Profit</div><div class="ms-value">${money(t.profit)}</div></div>`;
 }
 
-function renderItemPills() {
+function renderItemFilter() {
   const j = getJob(); if (!j) return;
-  $('itemPills').innerHTML =
-    `<div class="item-pill${currentItemIdx===-1?' active':''}" onclick="selectBudgetItem(-1)">Overview</div>` +
+  const sel = $('itemFilter');
+  sel.innerHTML = `<option value="-1"${currentItemIdx===-1?' selected':''}>Whole Project (${j.items.length} items)</option>` +
     j.items.map((item, idx) =>
-      `<div class="item-pill${currentItemIdx===idx?' active':''}" onclick="selectBudgetItem(${idx})">${esc(item.name)}</div>`
-    ).join('') +
-    `<div class="item-pill add-pill" onclick="addBudgetItem()">+ Add Item</div>`;
+      `<option value="${idx}"${currentItemIdx===idx?' selected':''}>${esc(item.name)}</option>`
+    ).join('');
 }
 
 function selectBudgetItem(idx) {
@@ -1771,21 +1808,72 @@ function deleteItem(idx) {
   autoSave(); renderBudget();
 }
 
-// ===== CATALOG SEARCH DROPDOWN =====
+// ===== CATALOG SEARCH DROPDOWN (with size grouping) =====
+function getBaseName(name) {
+  // Strip trailing parenthetical size info: "Dragon Skin 10 SLOW (Trial)" -> "Dragon Skin 10 SLOW"
+  return name.replace(/\s*\([^)]*\)\s*$/, '').trim();
+}
+
+function groupMaterials(mats) {
+  const groups = {};
+  mats.forEach(m => {
+    const base = getBaseName(m.name);
+    if (!groups[base]) groups[base] = [];
+    groups[base].push(m);
+  });
+  return groups;
+}
+
+let sizePickerOpen = null; // base name of currently open size picker
+
 function showMatDropdown() {
   const input = $('matSearchInput');
   const q = (input.value || '').toLowerCase();
   const dd = $('matDropdown');
   const allMats = settings.materials.concat(settings.customMaterials || []);
   const favs = settings.favorites || [];
-  const filtered = q ? allMats.filter(m => m.name.toLowerCase().includes(q)).slice(0, 15) : allMats.slice(0, 15);
-  dd.innerHTML = filtered.map(m => `<div class="cat-dropdown-item" onclick="addMaterialFromCatalog('${m.id}')">
-    <span class="cdi-name">${favs.includes(m.id)?'⭐ ':''}${esc(m.name)}</span>
-    <span class="cdi-meta">${money(m.unitCost)} · ${esc(m.size||m.unit||'')}</span></div>`).join('');
+  const filtered = q ? allMats.filter(m => m.name.toLowerCase().includes(q)) : allMats;
+
+  // Group by base name
+  const groups = groupMaterials(filtered);
+  const groupKeys = Object.keys(groups).slice(0, 20);
+
+  let html = '';
+  groupKeys.forEach(base => {
+    const variants = groups[base];
+    const isFav = variants.some(v => favs.includes(v.id));
+    if (variants.length === 1) {
+      // Single size — add directly
+      const m = variants[0];
+      html += `<div class="cat-dropdown-item" onclick="addMaterialFromCatalog('${m.id}')">
+        <span class="cdi-name">${isFav?'⭐ ':''}${esc(m.name)}</span>
+        <span class="cdi-meta">${money(m.unitCost)} · ${esc(m.size||'')}</span></div>`;
+    } else {
+      // Multiple sizes — show expander
+      const isOpen = sizePickerOpen === base;
+      html += `<div class="cat-dropdown-item" onclick="toggleSizePicker('${esc(base).replace(/'/g,"\\'")}')" style="font-weight:600;">
+        <span class="cdi-name">${isFav?'⭐ ':''}${esc(base)}</span>
+        <span class="cdi-meta" style="color:var(--purple-light);">${variants.length} sizes ${isOpen?'▾':'▸'}</span></div>`;
+      if (isOpen) {
+        variants.forEach(m => {
+          html += `<div class="cat-dropdown-item" onclick="addMaterialFromCatalog('${m.id}')" style="padding-left:24px;background:var(--bg-4);">
+            <span class="cdi-name" style="font-size:.82rem;">${esc(m.size || m.name)}</span>
+            <span class="cdi-meta">${money(m.unitCost)}</span></div>`;
+        });
+      }
+    }
+  });
+
   if (q && q.length > 1) {
-    dd.innerHTML += `<div class="cat-dropdown-add" onclick="addCustomInline('mat')">+ Add "${esc(input.value)}" as new material</div>`;
+    html += `<div class="cat-dropdown-add" onclick="addCustomInline('mat')">+ Add "${esc(input.value)}" as new material</div>`;
   }
+  dd.innerHTML = html;
   dd.classList.add('show');
+}
+
+function toggleSizePicker(baseName) {
+  sizePickerOpen = sizePickerOpen === baseName ? null : baseName;
+  showMatDropdown(); // re-render
 }
 
 function addMaterialFromCatalog(catId) {
