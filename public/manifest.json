@@ -1,11 +1,11 @@
 {
-  "name": "Job Budget Builder - SFX Fabrication",
-  "short_name": "Budget Builder",
-  "description": "Professional job budget builder for SFX fabrication",
+  "name": "Budgify — Job Budgeting for Fabricators",
+  "short_name": "Budgify",
+  "description": "Professional job budgeting tool for SFX fabrication, prop making, and creature building.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0e0e11",
-  "theme_color": "#0e0e11",
+  "background_color": "#141416",
+  "theme_color": "#141416",
   "orientation": "any",
   "icons": [
     {
