@@ -338,6 +338,57 @@ a:hover { text-decoration:underline; color:var(--purple-bright); }
 /* Item card in budget */
 .item-card { background:var(--bg-2); border:1px solid var(--border); border-radius:var(--radius-lg); margin-bottom:8px; box-shadow:var(--shadow), var(--shadow-glow); }
 
+/* EDITOR — Item Pills */
+.item-pills { display:flex; gap:4px; flex-wrap:wrap; align-items:center; margin-bottom:16px; }
+.item-pill { padding:6px 14px; font-family:var(--font-body); font-size:.85rem; font-weight:600; color:var(--text-2); background:var(--bg-3); border:1px solid var(--border); border-radius:20px; cursor:pointer; transition:all 200ms; white-space:nowrap; }
+.item-pill:hover { border-color:var(--border-bright); color:var(--text-1); }
+.item-pill.active { background:var(--purple-primary); color:#fff; border-color:var(--purple-primary); box-shadow:0 0 15px var(--purple-glow); }
+.item-pill.active:hover { background:var(--purple-light); }
+.item-pill.add-pill { color:var(--purple-light); border-style:dashed; border-color:var(--purple-primary); background:transparent; }
+.item-pill.add-pill:hover { background:rgba(147,51,234,0.1); }
+
+/* EDITOR — Materials/Labor Tabs */
+.editor-tabs { display:flex; gap:0; margin-bottom:0; }
+.editor-tab { padding:10px 20px; font-family:var(--font-display); font-size:.7rem; font-weight:600; text-transform:uppercase; letter-spacing:.8px; color:var(--text-3); background:var(--bg-3); border:1px solid var(--border); border-bottom:none; border-radius:var(--radius-md) var(--radius-md) 0 0; cursor:pointer; transition:all 200ms; margin-right:-1px; }
+.editor-tab.active { background:var(--bg-2); color:var(--purple-light); border-color:var(--border-light); position:relative; z-index:1; }
+.editor-tab:hover:not(.active) { color:var(--text-1); }
+
+/* EDITOR — Table Panel */
+.editor-panel { background:var(--bg-2); border:1px solid var(--border-light); border-radius:0 var(--radius-md) var(--radius-md) var(--radius-md); padding:16px; box-shadow:var(--shadow-md), var(--shadow-glow); }
+
+/* EDITOR — Inline Table Inputs */
+.tbl-input { width:100%; padding:4px 6px; font-family:var(--font-body); font-size:.9rem; font-weight:600; color:var(--text-0); background:transparent; border:1px solid transparent; border-radius:4px; text-align:right; transition:all 150ms; }
+.tbl-input:hover { border-color:var(--border); background:var(--bg-input); }
+.tbl-input:focus { border-color:var(--purple-primary); background:var(--bg-input); outline:none; box-shadow:0 0 8px rgba(147,51,234,0.2); }
+.tbl-input-name { text-align:left; font-weight:500; }
+.tbl-input-sm { width:60px; }
+.tbl-input-xs { width:50px; }
+
+/* EDITOR — Qty Buttons */
+.qty-wrap { display:flex; align-items:center; gap:2px; }
+.qty-btn { width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; color:var(--text-2); background:var(--bg-4); border:1px solid var(--border); border-radius:4px; cursor:pointer; transition:all 150ms; line-height:1; }
+.qty-btn:hover { color:var(--text-0); border-color:var(--purple-primary); background:rgba(147,51,234,0.15); }
+
+/* EDITOR — Quick-Add Bar */
+.quick-add { display:flex; gap:8px; align-items:center; padding:10px 0; border-top:1px solid var(--border); margin-top:8px; }
+
+/* EDITOR — Mini Summary Bar */
+.mini-summary { display:flex; gap:0; background:var(--bg-3); border:1px solid var(--border-light); border-radius:var(--radius-md); overflow:hidden; margin-bottom:16px; box-shadow:var(--shadow), var(--shadow-glow); }
+.mini-summary .ms-item { flex:1; padding:10px 14px; text-align:center; border-right:1px solid var(--border); }
+.mini-summary .ms-item:last-child { border-right:none; }
+.mini-summary .ms-label { font-family:var(--font-display); font-size:.55rem; font-weight:600; text-transform:uppercase; letter-spacing:.8px; color:var(--chrome-mid); }
+.mini-summary .ms-value { font-family:var(--font-body); font-size:1.05rem; font-weight:700; margin-top:2px; color:var(--chrome-light); }
+.mini-summary .ms-item.profit .ms-value { color:var(--green); }
+.mini-summary .ms-item.client .ms-value { background:var(--chrome-gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+/* EDITOR — Item Header */
+.item-header { background:var(--bg-3); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px; margin-bottom:14px; box-shadow:var(--shadow); }
+.item-header-title { font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--chrome-light); }
+.item-header-costs { display:flex; gap:16px; margin-top:8px; flex-wrap:wrap; }
+.item-header-costs .ihc { text-align:center; }
+.item-header-costs .ihc-label { font-family:var(--font-display); font-size:.55rem; font-weight:600; text-transform:uppercase; letter-spacing:.6px; color:var(--chrome-dark); }
+.item-header-costs .ihc-value { font-size:1rem; font-weight:700; color:var(--chrome-light); }
+
 @keyframes spin { to { transform:rotate(360deg); } }
 .spinner { width:24px; height:24px; border:3px solid var(--border); border-top-color:var(--purple-primary); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto; }
 </style>
@@ -369,7 +420,7 @@ a:hover { text-decoration:underline; color:var(--purple-bright); }
     <div class="features-grid">
       <div class="feature-card"><div class="icon">&#x1F9EA;</div><h3>Material Library</h3><p>146 SFX materials pre-loaded with real pricing from Smooth-On, Reynolds, Monster Makers, and more. Add your own as you go.</p></div>
       <div class="feature-card"><div class="icon">&#x1F477;</div><h3>Labor Tracking</h3><p>Add crew roles with hourly or daily rates and overtime rules. See labor costs update in real time as you plan.</p></div>
-      <div class="feature-card"><div class="icon">&#x1F4B0;</div><h3>Markup & Profit</h3><p>Full manual control over markup, tax, and expendables. Toggle between client view and internal breakdown.</p></div>
+      <div class="feature-card"><div class="icon">&#x1F4B0;</div><h3>Markup & Profit</h3><p>Full manual control over markup and tax. Per-item or global markup. Toggle between client view and internal breakdown.</p></div>
       <div class="feature-card"><div class="icon">&#x1F4CB;</div><h3>Job Breakdown</h3><p>Paste your scope, organize it into line items, or build piece by piece. However your brain works.</p></div>
       <div class="feature-card"><div class="icon">&#x1F4C4;</div><h3>Invoicing</h3><p>Generate client invoices or internal budgets. Track payment status, installments, and export for print or email.</p></div>
       <div class="feature-card"><div class="icon">&#x1F4F1;</div><h3>Works Everywhere</h3><p>Phone, tablet, laptop. Install it like an app. Works offline once loaded — no internet needed on set.</p></div>
@@ -552,31 +603,31 @@ a:hover { text-decoration:underline; color:var(--purple-bright); }
       </div>
     </div>
 
-    <!-- ===== BUDGET SCREEN ===== -->
+    <!-- ===== BUDGET SCREEN (v3-style editor) ===== -->
     <div id="screenBudget" class="screen">
-      <div class="steps" id="budgetSteps">
-        <div class="step done" onclick="goToJobStep('info')">Job Info</div>
-        <div class="step done" onclick="goToJobStep('breakdown')">Breakdown</div>
-        <div class="step active" onclick="goToJobStep('budget')">Budget</div>
-        <div class="step" onclick="goToJobStep('summary')">Summary</div>
-      </div>
-      <div id="budgetJobBar" class="job-info-bar"></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
-        <h2>Budget Builder</h2>
+      <!-- Pinned Job Info -->
+      <div id="budgetJobInfo" class="job-info-bar" style="margin-bottom:8px;"></div>
+      <!-- Navigation -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;" class="no-print">
         <div style="display:flex;gap:8px;">
           <button class="btn btn-ghost btn-sm" onclick="goToJobStep('breakdown')">&larr; Breakdown</button>
+          <button class="btn btn-ghost btn-sm" onclick="navigateTo('dashboard')">Dashboard</button>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="openCatalogModal()">Catalog</button>
           <button class="btn btn-primary btn-sm" onclick="goToJobStep('summary')">Summary &rarr;</button>
         </div>
       </div>
-      <!-- Totals overview -->
-      <div class="totals-bar" id="budgetTotals"></div>
-      <!-- Item selector tabs -->
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-        <div id="itemTabs" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
-        <button class="btn btn-secondary btn-sm" onclick="addBudgetItem()">+ Add Item</button>
-      </div>
-      <!-- Budget item detail -->
-      <div id="budgetItemDetail"></div>
+      <!-- Mini Summary Bar -->
+      <div class="mini-summary" id="miniSummary"></div>
+      <!-- Item Pills -->
+      <div class="item-pills" id="itemPills"></div>
+      <!-- Item Header (name, desc, markup, costs) -->
+      <div id="itemHeaderArea"></div>
+      <!-- Editor Tabs: Materials | Labor -->
+      <div id="editorTabBar" class="editor-tabs"></div>
+      <!-- Editor Panel (the table) -->
+      <div id="editorPanel" class="editor-panel"></div>
     </div>
 
     <!-- ===== SUMMARY SCREEN ===== -->
@@ -970,13 +1021,10 @@ function defaultSettings() {
       { id: uid(), name:'Krylon Crystal Clear (Sealer)', unitCost:10, category:'Adhesive', unit:'ea', vendor:'Krylon', size:'11 oz can', subcategory:'Sealer' },
       { id: uid(), name:'Green Marble SeLr', unitCost:14, category:'Adhesive', unit:'ea', vendor:'PPI', size:'2 oz', subcategory:'Sealer' },
       // SAFETY
-      { id: uid(), name:'Nitrile Gloves (Box/100)', unitCost:12, category:'Safety', unit:'box', vendor:'Various', size:'100 count', subcategory:'PPE' },
       { id: uid(), name:'3M Respirator (Half-Face)', unitCost:30, category:'Safety', unit:'ea', vendor:'3M', size:'Each', subcategory:'PPE' },
       { id: uid(), name:'3M P100 Filters (Pair)', unitCost:12, category:'Safety', unit:'pr', vendor:'3M', size:'Pair', subcategory:'PPE' },
       { id: uid(), name:'Safety Glasses', unitCost:8, category:'Safety', unit:'ea', vendor:'Various', size:'Each', subcategory:'PPE' },
       // TOOLS
-      { id: uid(), name:'Mixing Cups (100-Pack)', unitCost:18, category:'Tools', unit:'pk', vendor:'Various', size:'100 count', subcategory:'Consumables' },
-      { id: uid(), name:'Stir Sticks (100-Pack)', unitCost:8, category:'Tools', unit:'pk', vendor:'Various', size:'100 count', subcategory:'Consumables' },
       { id: uid(), name:'Digital Scale (0.1g)', unitCost:25, category:'Tools', unit:'ea', vendor:'Various', size:'Each', subcategory:'Equipment' },
       // ELECTRONICS
       { id: uid(), name:'LED Kit (RGB Strip, 5m)', unitCost:22, category:'Electronics', unit:'ea', vendor:'Various', size:'5m strip', subcategory:'Lighting' },
@@ -985,6 +1033,25 @@ function defaultSettings() {
       { id: uid(), name:'Servo Motor (High Torque)', unitCost:25, category:'Electronics', unit:'ea', vendor:'Various', size:'Each', subcategory:'Mechanical' },
       { id: uid(), name:'Arduino Nano', unitCost:12, category:'Electronics', unit:'ea', vendor:'Various', size:'Each', subcategory:'Controller' },
       { id: uid(), name:'Battery Pack (Rechargeable)', unitCost:18, category:'Electronics', unit:'ea', vendor:'Various', size:'Each', subcategory:'Power' },
+      // EXPENDABLES
+      { id: uid(), name:'Mixing Cups (100-Pack)', unitCost:18, category:'Expendables', unit:'pk', vendor:'Various', size:'100 count', subcategory:'Consumables' },
+      { id: uid(), name:'Stir Sticks (100-Pack)', unitCost:8, category:'Expendables', unit:'pk', vendor:'Various', size:'100 count', subcategory:'Consumables' },
+      { id: uid(), name:'Nitrile Gloves (Box/100)', unitCost:12, category:'Expendables', unit:'box', vendor:'Various', size:'100 count', subcategory:'PPE' },
+      { id: uid(), name:'Trash Bags (50ct Heavy Duty)', unitCost:15, category:'Expendables', unit:'pk', vendor:'Various', size:'50 count', subcategory:'Cleanup' },
+      { id: uid(), name:'Paper Towels (6-Roll)', unitCost:10, category:'Expendables', unit:'pk', vendor:'Various', size:'6 rolls', subcategory:'Cleanup' },
+      { id: uid(), name:'Plastic Sheeting (10x25ft)', unitCost:14, category:'Expendables', unit:'roll', vendor:'Various', size:'10x25 ft', subcategory:'Protection' },
+      { id: uid(), name:'Gaff Tape (2" Black)', unitCost:22, category:'Expendables', unit:'roll', vendor:'Various', size:'2"x60yd', subcategory:'Tape' },
+      { id: uid(), name:'Masking Tape (1.5")', unitCost:6, category:'Expendables', unit:'roll', vendor:'Various', size:'1.5"x60yd', subcategory:'Tape' },
+      { id: uid(), name:'Painter\'s Tape (1")', unitCost:5, category:'Expendables', unit:'roll', vendor:'Various', size:'1"x60yd', subcategory:'Tape' },
+      { id: uid(), name:'Zip Ties (100-Pack)', unitCost:6, category:'Expendables', unit:'pk', vendor:'Various', size:'100 count', subcategory:'Hardware' },
+      { id: uid(), name:'Acetone (1 Qt)', unitCost:10, category:'Expendables', unit:'qt', vendor:'Various', size:'1 Quart', subcategory:'Solvents' },
+      { id: uid(), name:'Isopropyl Alcohol 99% (32oz)', unitCost:10, category:'Expendables', unit:'ea', vendor:'Various', size:'32 oz', subcategory:'Solvents' },
+      { id: uid(), name:'Sandpaper Assortment Pack', unitCost:12, category:'Expendables', unit:'pk', vendor:'Various', size:'20 sheets', subcategory:'Abrasives' },
+      { id: uid(), name:'Razor Blades (#11, 100-Pack)', unitCost:14, category:'Expendables', unit:'pk', vendor:'Various', size:'100 count', subcategory:'Cutting' },
+      { id: uid(), name:'Drop Cloths (9x12ft, 3-Pack)', unitCost:12, category:'Expendables', unit:'pk', vendor:'Various', size:'3 pack', subcategory:'Protection' },
+      { id: uid(), name:'Heat Gun Sticks (Glue, 50-Pack)', unitCost:10, category:'Expendables', unit:'pk', vendor:'Various', size:'50 count', subcategory:'Adhesive' },
+      { id: uid(), name:'Spray Bottles (3-Pack)', unitCost:6, category:'Expendables', unit:'pk', vendor:'Various', size:'3 pack', subcategory:'Tools' },
+      { id: uid(), name:'Clay Tools Disposable (10-Pack)', unitCost:8, category:'Expendables', unit:'pk', vendor:'Various', size:'10 count', subcategory:'Tools' },
     ],
     technicians: [
       { id: uid(), name:'Lead Artist', rate:65, dailyRate:520, rateType:'hourly', otAfterHours:8, otMultiplier:1.5 },
@@ -1002,7 +1069,7 @@ function defaultSettings() {
 // ===== SPECIALTY TEMPLATES =====
 const SPECIALTIES = [
   { id:'makeup_fx', icon:'🎭', name:'Makeup FX', desc:'Prosthetics, appliances, on-set makeup for film, TV, theater.',
-    categories:['Silicone','Adhesive','Paint','Foam'], laborRoles:[
+    categories:['Silicone','Adhesive','Paint','Foam','Expendables'], laborRoles:[
       {name:'Lead Makeup Artist',rate:75,dailyRate:600,rateType:'hourly',otAfterHours:10,otMultiplier:1.5},
       {name:'Key Makeup Artist',rate:60,dailyRate:480,rateType:'hourly',otAfterHours:10,otMultiplier:1.5},
       {name:'Makeup FX Assistant',rate:40,dailyRate:320,rateType:'hourly',otAfterHours:10,otMultiplier:1.5},
@@ -1010,7 +1077,7 @@ const SPECIALTIES = [
       {name:'Lab Tech',rate:35,dailyRate:280,rateType:'hourly',otAfterHours:8,otMultiplier:1.5}
     ]},
   { id:'creature_suit', icon:'👹', name:'Creature / Suit', desc:'Full-body suits, animatronics, creature FX, masks.',
-    categories:['Silicone','Resin','Foam','Sculpting','Molding','Paint','Adhesive','Electronics','Safety'], laborRoles:[
+    categories:['Silicone','Resin','Foam','Sculpting','Molding','Paint','Adhesive','Electronics','Safety','Expendables'], laborRoles:[
       {name:'Lead Creature Designer',rate:75,dailyRate:600,rateType:'hourly',otAfterHours:8,otMultiplier:1.5},
       {name:'Sculptor',rate:55,dailyRate:440,rateType:'hourly',otAfterHours:8,otMultiplier:1.5},
       {name:'Mold Maker',rate:55,dailyRate:440,rateType:'hourly',otAfterHours:8,otMultiplier:1.5},
@@ -1019,7 +1086,7 @@ const SPECIALTIES = [
       {name:'Mechanical / Electronics',rate:60,dailyRate:480,rateType:'hourly',otAfterHours:8,otMultiplier:1.5}
     ]},
   { id:'prop_fab', icon:'🔧', name:'Prop Fabrication', desc:'Props, replicas, set pieces, breakaway items.',
-    categories:['Resin','Molding','Sculpting','Paint','Safety'], laborRoles:[
+    categories:['Resin','Molding','Sculpting','Paint','Safety','Expendables'], laborRoles:[
       {name:'Lead Fabricator',rate:65,dailyRate:520,rateType:'hourly',otAfterHours:8,otMultiplier:1.5},
       {name:'Sculptor',rate:55,dailyRate:440,rateType:'hourly',otAfterHours:8,otMultiplier:1.5},
       {name:'Mold Maker',rate:55,dailyRate:440,rateType:'hourly',otAfterHours:8,otMultiplier:1.5},
@@ -1027,13 +1094,13 @@ const SPECIALTIES = [
       {name:'Assistant',rate:35,dailyRate:280,rateType:'hourly',otAfterHours:8,otMultiplier:1.5}
     ]},
   { id:'mold_making', icon:'🧪', name:'Mold Making & Casting', desc:'Silicone molds, resin casting, lifecasting, plaster.',
-    categories:['Silicone','Resin','Molding','Safety'], laborRoles:[
+    categories:['Silicone','Resin','Molding','Safety','Expendables'], laborRoles:[
       {name:'Lead Mold Maker',rate:65,dailyRate:520,rateType:'hourly',otAfterHours:8,otMultiplier:1.5},
       {name:'Caster',rate:45,dailyRate:360,rateType:'hourly',otAfterHours:8,otMultiplier:1.5},
       {name:'Lab Assistant',rate:35,dailyRate:280,rateType:'hourly',otAfterHours:8,otMultiplier:1.5}
     ]},
   { id:'scenic', icon:'🏗', name:'Scenic / Set Build', desc:'Themed environments, set dressing, scenic painting.',
-    categories:['Resin','Molding','Sculpting','Paint','Safety'], laborRoles:[
+    categories:['Resin','Molding','Sculpting','Paint','Safety','Expendables'], laborRoles:[
       {name:'Scenic Lead',rate:60,dailyRate:480,rateType:'hourly',otAfterHours:8,otMultiplier:1.5},
       {name:'Scenic Painter',rate:50,dailyRate:400,rateType:'hourly',otAfterHours:8,otMultiplier:1.5},
       {name:'Scenic Carpenter',rate:50,dailyRate:400,rateType:'hourly',otAfterHours:8,otMultiplier:1.5},
@@ -1054,9 +1121,9 @@ const SPECIALTIES = [
 function defaultJob(title) {
   return {
     id: uid(), title: title || 'Untitled Job', date: today(), client: '', projectId: '', location: '', jobType: '',
-    buildNotes: '', scope: '',
-    items: [{ id: uid(), name: 'General', description: '', materials: [], labor: [], expendables: 0, markupPct: settings.markupDefault || 20 }],
-    shipping: 0, archived: false, createdAt: Date.now()
+    buildNotes: '', scope: '', globalMarkup: settings.markupDefault || 20,
+    items: [{ id: uid(), name: 'General', description: '', materials: [], labor: [], markupPct: 0 }],
+    shipping: 0, taxRate: 0, taxEnabled: false, archived: false, createdAt: Date.now()
   };
 }
 
@@ -1363,7 +1430,7 @@ function parseScope() {
   lines.forEach(line => {
     const name = line.trim().replace(/^[-•*\d.)\s]+/, '').trim();
     if (name && !j.items.find(i => i.name.toLowerCase() === name.toLowerCase())) {
-      j.items.push({ id: uid(), name: name.substring(0, 60), description: line.trim(), materials: [], labor: [], expendables: 0, markupPct: settings.markupDefault || 20 });
+      j.items.push({ id: uid(), name: name.substring(0, 60), description: line.trim(), materials: [], labor: [], markupPct: 0 });
     }
   });
   autoSave();
@@ -1389,7 +1456,7 @@ function renderBreakdownItems() {
 
 function addBreakdownItem() {
   const j = getJob(); if (!j) return;
-  j.items.push({ id: uid(), name: 'New Item', description: '', materials: [], labor: [], expendables: 0, markupPct: settings.markupDefault || 20 });
+  j.items.push({ id: uid(), name: 'New Item', description: '', materials: [], labor: [], markupPct: 0 });
   autoSave();
   renderBreakdownItems();
 }
@@ -1416,182 +1483,291 @@ function updateItemDesc(idx, val) {
 }
 
 
-// ===== BUDGET BUILDER =====
+// ===== BUDGET BUILDER (v3-style table editor) =====
+let editorTab = 'materials'; // 'materials' or 'labor'
+
 function renderBudget() {
   const j = getJob(); if (!j) return;
-  renderJobInfoBar('budgetJobBar');
-  renderBudgetTotals();
-  renderItemTabs();
-  renderBudgetItemDetail();
+  renderJobInfoBar('budgetJobInfo');
+  renderMiniSummary();
+  renderItemPills();
+  renderItemHeader();
+  renderEditorTabs();
+  renderEditorPanel();
 }
 
-function renderBudgetTotals() {
+function renderMiniSummary() {
   const j = getJob(); if (!j) return;
   const t = calcJobTotal(j);
-  $('budgetTotals').innerHTML = `
-    <div class="total-box"><div class="total-label">Materials</div><div class="total-value">${money(t.materialCost)}</div></div>
-    <div class="total-box"><div class="total-label">Labor</div><div class="total-value">${money(t.laborCost)}</div></div>
-    <div class="total-box"><div class="total-label">Expendables</div><div class="total-value">${money(t.expendablesCost)}</div></div>
-    <div class="total-box"><div class="total-label">Internal Cost</div><div class="total-value">${money(t.totalCost)}</div></div>
-    <div class="total-box highlight"><div class="total-label">Client Total</div><div class="total-value">${money(t.clientTotal)}</div></div>
-    <div class="total-box" style="border-color:rgba(34,197,94,0.25);background:var(--green-dim);"><div class="total-label">Profit</div><div class="total-value" style="color:var(--green);">${money(t.profit)}</div></div>`;
+  $('miniSummary').innerHTML = `
+    <div class="ms-item"><div class="ms-label">Materials</div><div class="ms-value">${money(t.materialCost)}</div></div>
+    <div class="ms-item"><div class="ms-label">Labor</div><div class="ms-value">${money(t.laborCost)}</div></div>
+    <div class="ms-item"><div class="ms-label">Your Cost</div><div class="ms-value">${money(t.totalCost)}</div></div>
+    <div class="ms-item client"><div class="ms-label">Client Total</div><div class="ms-value">${money(t.clientTotal)}</div></div>
+    <div class="ms-item profit"><div class="ms-label">Profit</div><div class="ms-value">${money(t.profit)}</div></div>`;
 }
 
-function renderItemTabs() {
+function renderItemPills() {
   const j = getJob(); if (!j) return;
-  $('itemTabs').innerHTML = [
-    `<button class="tab-btn${currentItemIdx===-1?' active':''}" onclick="selectBudgetItem(-1)" style="font-size:0.78rem;padding:6px 12px;">Overview</button>`
-  ].concat(j.items.map((item, idx) =>
-    `<button class="tab-btn${currentItemIdx===idx?' active':''}" onclick="selectBudgetItem(${idx})" style="font-size:0.78rem;padding:6px 12px;">${esc(item.name).substring(0,20)}</button>`
-  )).join('');
+  $('itemPills').innerHTML =
+    `<div class="item-pill${currentItemIdx===-1?' active':''}" onclick="selectBudgetItem(-1)">Overview</div>` +
+    j.items.map((item, idx) =>
+      `<div class="item-pill${currentItemIdx===idx?' active':''}" onclick="selectBudgetItem(${idx})">${esc(item.name)}</div>`
+    ).join('') +
+    `<div class="item-pill add-pill" onclick="addBudgetItem()">+ Add Item</div>`;
 }
 
 function selectBudgetItem(idx) {
   currentItemIdx = idx;
-  renderItemTabs();
-  renderBudgetItemDetail();
+  editorTab = 'materials';
+  renderBudget();
 }
 
 function addBudgetItem() {
   const j = getJob(); if (!j) return;
-  j.items.push({ id: uid(), name: 'New Item', description: '', materials: [], labor: [], expendables: 0, markupPct: settings.markupDefault || 20 });
+  const name = prompt('Item name:', 'New Item');
+  if (!name) return;
+  j.items.push({ id:uid(), name, description:'', materials:[], labor:[], markupPct:0 });
   currentItemIdx = j.items.length - 1;
   autoSave();
   renderBudget();
 }
 
-function renderBudgetItemDetail() {
+function renderItemHeader() {
   const j = getJob(); if (!j) return;
-  const container = $('budgetItemDetail');
+  const area = $('itemHeaderArea');
 
-  // Overview mode
+  // Overview mode — show global markup
   if (currentItemIdx === -1) {
-    container.innerHTML = `<div class="card"><h3 style="margin-bottom:14px;">All Items Overview</h3>
-      <table class="tbl"><thead><tr><th>Item</th><th class="num">Materials</th><th class="num">Labor</th><th class="num">Expend.</th><th class="num">Markup</th><th class="num">Client Price</th></tr></thead>
-      <tbody>${j.items.map((item, idx) => {
-        const t = calcItemTotal(item);
-        return `<tr onclick="selectBudgetItem(${idx})" style="cursor:pointer;">
-          <td><strong>${esc(item.name)}</strong></td>
-          <td class="num">${money(t.materialCost)}</td><td class="num">${money(t.laborCost)}</td>
-          <td class="num">${money(item.expendables||0)}</td><td class="num">${pct(item.markupPct)}</td>
-          <td class="num"><strong>${money(t.clientPrice)}</strong></td></tr>`;
-      }).join('')}</tbody></table></div>`;
+    const t = calcJobTotal(j);
+    area.innerHTML = `<div class="item-header">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <div class="item-header-title" style="font-size:1.1rem;">Overview — All Items</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <label class="form-label" style="margin:0;">Global Markup %</label>
+          <input type="number" class="tbl-input" style="width:70px;text-align:center;border:1px solid var(--border-light);" value="${j.globalMarkup||0}" onchange="updateGlobalMarkup(this.value)" min="0" max="500">
+        </div>
+      </div>
+      <p style="font-size:.82rem;color:var(--text-2);margin-top:6px;">Viewing all materials and labor across the entire project. Items without a per-item markup use the global markup above.</p>
+    </div>`;
     return;
   }
 
-  const item = j.items[currentItemIdx];
-  if (!item) return;
-  const t = calcItemTotal(item);
+  const item = j.items[currentItemIdx]; if (!item) return;
+  const t = calcItemTotal(item, j);
+  const effectiveMarkup = item.markupPct > 0 ? item.markupPct : (j.globalMarkup || 0);
 
-  container.innerHTML = `
-    <div class="card" style="margin-bottom:12px;">
-      <div class="form-row" style="align-items:end;">
-        <div class="form-group" style="flex:2;"><label class="form-label">Item Name</label>
-          <input type="text" class="form-input" value="${esc(item.name)}" onchange="updateBudgetItemField('name', this.value)"></div>
-        <div class="form-group" style="flex:1;"><label class="form-label">Markup %</label>
-          <input type="number" class="form-input form-input-mono" value="${item.markupPct||0}" onchange="updateBudgetItemField('markupPct', this.value)" min="0" max="500"></div>
-        <div class="form-group" style="flex:1;"><label class="form-label">Expendables $</label>
-          <input type="number" class="form-input form-input-mono" value="${item.expendables||0}" onchange="updateBudgetItemField('expendables', this.value)" min="0" step="0.01"></div>
+  area.innerHTML = `<div class="item-header">
+    <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;">
+      <div style="flex:2;min-width:200px;">
+        <input type="text" class="form-input" value="${esc(item.name)}" onchange="updateItemField('name',this.value)" style="font-family:var(--font-display);font-size:1rem;font-weight:700;padding:6px 10px;margin-bottom:8px;">
+        <textarea class="form-textarea" onchange="updateItemField('description',this.value)" placeholder="Item description (scope, notes, deliverables)..." style="min-height:56px;font-size:.9rem;">${esc(item.description||'')}</textarea>
       </div>
-      <div class="form-group"><label class="form-label">Description</label>
-        <textarea class="form-textarea" onchange="updateBudgetItemField('description', this.value)" style="min-height:60px;">${esc(item.description||'')}</textarea></div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
+        <div style="text-align:center;">
+          <div class="form-label" style="margin-bottom:2px;">Markup %</div>
+          <input type="number" class="tbl-input" style="width:65px;text-align:center;border:1px solid var(--border-light);font-size:1rem;" value="${item.markupPct||0}" onchange="updateItemField('markupPct',this.value)" min="0" max="500" title="0 = use global markup (${j.globalMarkup||0}%)">
+          ${item.markupPct <= 0 ? `<div style="font-size:.65rem;color:var(--text-3);margin-top:2px;">Global: ${j.globalMarkup||0}%</div>` : ''}
+        </div>
+        <div class="item-header-costs">
+          <div class="ihc"><div class="ihc-label">Cost</div><div class="ihc-value">${money(t.internalCost)}</div></div>
+          <div class="ihc"><div class="ihc-label">Client</div><div class="ihc-value" style="background:var(--chrome-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${money(t.clientPrice)}</div></div>
+          <div class="ihc"><div class="ihc-label">Profit</div><div class="ihc-value" style="color:var(--green);">${money(t.profit)}</div></div>
+        </div>
+      </div>
     </div>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button class="btn btn-ghost btn-sm" onclick="deleteItem(${currentItemIdx})" style="color:var(--red-bright);font-size:.78rem;">Delete Item</button>
+    </div>
+  </div>`;
+}
 
-    <!-- MATERIALS -->
-    <div class="card" style="margin-bottom:12px;">
-      <div class="card-header"><h4>Materials</h4><span style="font-family:var(--mono);font-size:0.85rem;color:var(--text-1);">${money(t.materialCost)}</span></div>
-      <table class="tbl"><thead><tr><th>Material</th><th>Size</th><th class="num">Unit Cost</th><th class="num">Qty</th><th class="num">Waste%</th><th class="num">Total</th><th></th></tr></thead>
-      <tbody id="matRows">${(item.materials||[]).map((m, mi) => materialRow(m, mi)).join('')}</tbody></table>
-      <div style="margin-top:10px;display:flex;gap:8px;">
-        <div class="cat-search-wrap" style="flex:1;max-width:320px;">
-          <input type="text" class="form-input" placeholder="Search catalog or type new..." id="matSearchInput" onfocus="showMatDropdown()" oninput="showMatDropdown()">
+function renderEditorTabs() {
+  $('editorTabBar').innerHTML = `
+    <div class="editor-tab${editorTab==='materials'?' active':''}" onclick="switchEditorTab('materials')">Materials</div>
+    <div class="editor-tab${editorTab==='labor'?' active':''}" onclick="switchEditorTab('labor')">Labor</div>`;
+}
+
+function switchEditorTab(tab) {
+  editorTab = tab;
+  renderEditorTabs();
+  renderEditorPanel();
+}
+
+function renderEditorPanel() {
+  const j = getJob(); if (!j) return;
+  const panel = $('editorPanel');
+  const isOverview = currentItemIdx === -1;
+
+  if (editorTab === 'materials') {
+    // Gather materials
+    let mats = [];
+    if (isOverview) {
+      j.items.forEach((item, iIdx) => (item.materials||[]).forEach((m, mIdx) => mats.push({...m, _itemIdx:iIdx, _matIdx:mIdx, _itemName:item.name})));
+    } else {
+      mats = (j.items[currentItemIdx].materials||[]).map((m, mIdx) => ({...m, _matIdx:mIdx}));
+    }
+
+    let totalMat = mats.reduce((s,m) => s + (m.unitCost||0)*(m.qty||0)*(1+(m.waste||0)/100), 0);
+
+    panel.innerHTML = `
+      <table class="tbl">
+        <thead><tr>
+          ${isOverview ? '<th>Item</th>' : ''}
+          <th>Material</th><th>Size</th><th style="text-align:right;">Unit Cost</th><th style="text-align:right;">Qty</th><th style="text-align:right;">Waste%</th><th style="text-align:right;">Total</th>
+          ${!isOverview ? '<th style="width:36px;"></th>' : ''}
+        </tr></thead>
+        <tbody>${mats.map((m, i) => {
+          const lineTotal = (m.unitCost||0) * (m.qty||0) * (1 + (m.waste||0)/100);
+          const ro = isOverview;
+          const idx = ro ? m._matIdx : i;
+          const iIdx = ro ? m._itemIdx : currentItemIdx;
+          return `<tr>
+            ${ro ? `<td style="font-size:.78rem;color:var(--text-2);">${esc(m._itemName)}</td>` : ''}
+            <td>${esc(m.name)}</td>
+            <td style="font-size:.78rem;color:var(--text-2);">${esc(m.size||'')}</td>
+            <td>${ro ? `<span style="text-align:right;display:block;">${money(m.unitCost)}</span>` : `<input type="number" class="tbl-input tbl-input-sm" value="${m.unitCost||0}" onchange="editMat(${iIdx},${idx},'unitCost',this.value)" step="0.01" min="0">`}</td>
+            <td>${ro ? `<span style="text-align:right;display:block;">${m.qty||0}</span>` : `<div class="qty-wrap"><div class="qty-btn" onclick="nudgeMat(${iIdx},${idx},'qty',-1)">−</div><input type="number" class="tbl-input tbl-input-xs" value="${m.qty||0}" onchange="editMat(${iIdx},${idx},'qty',this.value)" min="0"><div class="qty-btn" onclick="nudgeMat(${iIdx},${idx},'qty',1)">+</div></div>`}</td>
+            <td>${ro ? `<span style="text-align:right;display:block;">${m.waste||0}</span>` : `<input type="number" class="tbl-input tbl-input-xs" value="${m.waste||0}" onchange="editMat(${iIdx},${idx},'waste',this.value)" min="0" max="100">`}</td>
+            <td style="text-align:right;font-weight:600;">${money(lineTotal)}</td>
+            ${!ro ? `<td><button class="btn btn-ghost btn-icon btn-sm" onclick="removeMat(${iIdx},${idx})" title="Remove">&times;</button></td>` : ''}
+          </tr>`;
+        }).join('')}
+        ${mats.length === 0 ? `<tr><td colspan="${isOverview?8:7}" style="text-align:center;color:var(--text-3);padding:20px;">No materials added yet</td></tr>` : ''}
+        </tbody>
+        <tfoot><tr>
+          <td colspan="${isOverview?5:4}" style="text-align:right;font-family:var(--font-display);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--chrome-mid);">Materials Total</td>
+          <td></td>
+          <td style="text-align:right;font-weight:700;font-size:1rem;border-top:2px solid var(--border-light);">${money(totalMat)}</td>
+          ${!isOverview ? '<td></td>' : ''}
+        </tr></tfoot>
+      </table>
+      <!-- Quick-Add -->
+      <div class="quick-add">
+        <div class="cat-search-wrap" style="flex:1;max-width:360px;">
+          <input type="text" class="form-input" placeholder="${isOverview ? 'Add material to General item...' : 'Search catalog or type new...'}" id="matSearchInput" onfocus="showMatDropdown()" oninput="showMatDropdown()" style="font-size:.88rem;">
           <div class="cat-dropdown" id="matDropdown"></div>
         </div>
-      </div>
-    </div>
+        <button class="btn btn-ghost btn-sm" onclick="openCatalogModal()">Full Catalog</button>
+      </div>`;
+  } else {
+    // LABOR TAB
+    let labors = [];
+    if (isOverview) {
+      j.items.forEach((item, iIdx) => (item.labor||[]).forEach((l, lIdx) => labors.push({...l, _itemIdx:iIdx, _labIdx:lIdx, _itemName:item.name})));
+    } else {
+      labors = (j.items[currentItemIdx].labor||[]).map((l, lIdx) => ({...l, _labIdx:lIdx}));
+    }
 
-    <!-- LABOR -->
-    <div class="card" style="margin-bottom:12px;">
-      <div class="card-header"><h4>Labor</h4><span style="font-family:var(--mono);font-size:0.85rem;color:var(--text-1);">${money(t.laborCost)}</span></div>
-      <table class="tbl"><thead><tr><th>Role</th><th>Type</th><th class="num">Rate</th><th class="num">Qty</th><th class="num">OT Hrs</th><th class="num">Total</th><th></th></tr></thead>
-      <tbody id="laborRows">${(item.labor||[]).map((l, li) => laborRow(l, li)).join('')}</tbody></table>
-      <div style="margin-top:10px;display:flex;gap:8px;">
-        <div class="cat-search-wrap" style="flex:1;max-width:320px;">
-          <input type="text" class="form-input" placeholder="Search roles or type new..." id="laborSearchInput" onfocus="showLaborDropdown()" oninput="showLaborDropdown()">
+    let totalLab = labors.reduce((s,l) => {
+      const base = (l.rate||0)*(l.qty||0);
+      const ot = l.rateType==='daily' ? 0 : (l.otHours||0)*(l.rate||0)*(l.otMultiplier||1.5);
+      return s + base + ot;
+    }, 0);
+
+    panel.innerHTML = `
+      <table class="tbl">
+        <thead><tr>
+          ${isOverview ? '<th>Item</th>' : ''}
+          <th>Role</th><th>Type</th><th style="text-align:right;">Rate</th><th style="text-align:right;">${'Hrs/Days'}</th><th style="text-align:right;">OT Hrs</th><th style="text-align:right;">Total</th>
+          ${!isOverview ? '<th style="width:36px;"></th>' : ''}
+        </tr></thead>
+        <tbody>${labors.map((l, i) => {
+          const isDaily = l.rateType === 'daily';
+          const base = (l.rate||0)*(l.qty||0);
+          const ot = isDaily ? 0 : (l.otHours||0)*(l.rate||0)*(l.otMultiplier||1.5);
+          const lineTotal = base + ot;
+          const ro = isOverview;
+          const idx = ro ? l._labIdx : i;
+          const iIdx = ro ? l._itemIdx : currentItemIdx;
+          return `<tr>
+            ${ro ? `<td style="font-size:.78rem;color:var(--text-2);">${esc(l._itemName)}</td>` : ''}
+            <td>${esc(l.role)}</td>
+            <td>${ro ? (isDaily?'Daily':'Hourly') : `<select class="form-select" style="padding:3px 6px;font-size:.78rem;width:72px;" onchange="editLabor(${iIdx},${idx},'rateType',this.value)"><option value="hourly"${!isDaily?' selected':''}>Hourly</option><option value="daily"${isDaily?' selected':''}>Daily</option></select>`}</td>
+            <td>${ro ? `<span style="text-align:right;display:block;">${money(l.rate)}</span>` : `<input type="number" class="tbl-input tbl-input-sm" value="${l.rate||0}" onchange="editLabor(${iIdx},${idx},'rate',this.value)" step="0.01" min="0">`}</td>
+            <td>${ro ? `<span style="text-align:right;display:block;">${l.qty||0}</span>` : `<div class="qty-wrap"><div class="qty-btn" onclick="nudgeLabor(${iIdx},${idx},'qty',-0.5)">−</div><input type="number" class="tbl-input tbl-input-xs" value="${l.qty||0}" onchange="editLabor(${iIdx},${idx},'qty',this.value)" min="0" step="0.5"><div class="qty-btn" onclick="nudgeLabor(${iIdx},${idx},'qty',0.5)">+</div></div>`}</td>
+            <td>${isDaily ? '<span style="color:var(--text-3);text-align:right;display:block;">—</span>' : (ro ? `<span style="text-align:right;display:block;">${l.otHours||0}</span>` : `<input type="number" class="tbl-input tbl-input-xs" value="${l.otHours||0}" onchange="editLabor(${iIdx},${idx},'otHours',this.value)" min="0" step="0.5">`)}</td>
+            <td style="text-align:right;font-weight:600;">${money(lineTotal)}</td>
+            ${!ro ? `<td><button class="btn btn-ghost btn-icon btn-sm" onclick="removeLabor(${iIdx},${idx})" title="Remove">&times;</button></td>` : ''}
+          </tr>`;
+        }).join('')}
+        ${labors.length === 0 ? `<tr><td colspan="${isOverview?8:7}" style="text-align:center;color:var(--text-3);padding:20px;">No labor added yet</td></tr>` : ''}
+        </tbody>
+        <tfoot><tr>
+          <td colspan="${isOverview?5:4}" style="text-align:right;font-family:var(--font-display);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--chrome-mid);">Labor Total</td>
+          <td></td>
+          <td style="text-align:right;font-weight:700;font-size:1rem;border-top:2px solid var(--border-light);">${money(totalLab)}</td>
+          ${!isOverview ? '<td></td>' : ''}
+        </tr></tfoot>
+      </table>
+      <!-- Quick-Add Labor -->
+      <div class="quick-add">
+        <div class="cat-search-wrap" style="flex:1;max-width:360px;">
+          <input type="text" class="form-input" placeholder="${isOverview ? 'Add role to General item...' : 'Search roles or type new...'}" id="laborSearchInput" onfocus="showLaborDropdown()" oninput="showLaborDropdown()" style="font-size:.88rem;">
           <div class="cat-dropdown" id="laborDropdown"></div>
         </div>
-      </div>
-    </div>
-
-    <!-- ITEM SUMMARY -->
-    <div class="card" style="background:var(--bg-3);">
-      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-        <div><span style="color:var(--text-2);font-size:0.82rem;">Internal Cost</span><br><span style="font-family:var(--mono);font-size:1.1rem;font-weight:600;">${money(t.internalCost)}</span></div>
-        <div><span style="color:var(--text-2);font-size:0.82rem;">+ Markup (${pct(item.markupPct)})</span><br><span style="font-family:var(--mono);font-size:1.1rem;font-weight:600;">${money(t.markupAmount)}</span></div>
-        <div><span style="color:var(--text-2);font-size:0.82rem;">Client Price</span><br><span style="font-family:var(--mono);font-size:1.1rem;font-weight:700;background:var(--chrome-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${money(t.clientPrice)}</span></div>
-        <div><span style="color:var(--text-2);font-size:0.82rem;">Profit</span><br><span style="font-family:var(--mono);font-size:1.1rem;font-weight:600;color:var(--green);">${money(t.profit)}</span></div>
-      </div>
-    </div>`;
-
-  // Close dropdown on click outside
-  document.addEventListener('click', closeMaterialDropdown, { once: true });
+      </div>`;
+  }
 }
 
-function materialRow(m, idx) {
-  const total = (m.unitCost || 0) * (m.qty || 0) * (1 + (m.waste||0)/100);
-  return `<tr>
-    <td>${esc(m.name)}</td><td style="font-size:0.78rem;color:var(--text-2);">${esc(m.size||'')}</td>
-    <td class="num"><input type="number" class="summary-input" value="${m.unitCost||0}" onchange="updateMat(${idx},'unitCost',this.value)" step="0.01" min="0"></td>
-    <td class="num"><input type="number" class="summary-input" value="${m.qty||0}" onchange="updateMat(${idx},'qty',this.value)" min="0" style="width:60px;"></td>
-    <td class="num"><input type="number" class="summary-input" value="${m.waste||0}" onchange="updateMat(${idx},'waste',this.value)" min="0" max="100" style="width:55px;"></td>
-    <td class="num" style="font-family:var(--mono);">${money(total)}</td>
-    <td><button class="btn btn-ghost btn-sm" onclick="removeMat(${idx})">&times;</button></td></tr>`;
+// === Material editing ===
+function editMat(itemIdx, matIdx, field, val) {
+  const j = getJob(); if (!j) return;
+  j.items[itemIdx].materials[matIdx][field] = parseFloat(val) || 0;
+  autoSave(); renderBudget();
+}
+function nudgeMat(itemIdx, matIdx, field, delta) {
+  const j = getJob(); if (!j) return;
+  const m = j.items[itemIdx].materials[matIdx];
+  m[field] = Math.max(0, (m[field]||0) + delta);
+  autoSave(); renderBudget();
+}
+function removeMat(itemIdx, matIdx) {
+  const j = getJob(); if (!j) return;
+  j.items[itemIdx].materials.splice(matIdx, 1);
+  autoSave(); renderBudget();
 }
 
-function laborRow(l, idx) {
-  const isDaily = l.rateType === 'daily';
-  const baseCost = isDaily ? (l.rate||0) * (l.qty||0) : (l.rate||0) * (l.qty||0);
-  const otCost = isDaily ? 0 : (l.otHours||0) * (l.rate||0) * (l.otMultiplier||1.5);
-  const total = baseCost + otCost;
-  return `<tr>
-    <td>${esc(l.role)}</td>
-    <td><select class="form-select" style="padding:3px 6px;font-size:0.78rem;width:70px;" onchange="updateLabor(${idx},'rateType',this.value)"><option value="hourly"${!isDaily?' selected':''}>Hourly</option><option value="daily"${isDaily?' selected':''}>Daily</option></select></td>
-    <td class="num"><input type="number" class="summary-input" value="${l.rate||0}" onchange="updateLabor(${idx},'rate',this.value)" step="0.01" min="0"></td>
-    <td class="num"><input type="number" class="summary-input" value="${l.qty||0}" onchange="updateLabor(${idx},'qty',this.value)" min="0" step="0.5" style="width:60px;" title="${isDaily?'Days':'Hours'}"></td>
-    <td class="num">${isDaily ? '<span style="color:var(--text-3);">—</span>' : `<input type="number" class="summary-input" value="${l.otHours||0}" onchange="updateLabor(${idx},'otHours',this.value)" min="0" step="0.5" style="width:55px;">`}</td>
-    <td class="num" style="font-family:var(--mono);">${money(total)}</td>
-    <td><button class="btn btn-ghost btn-sm" onclick="removeLabor(${idx})">&times;</button></td></tr>`;
+// === Labor editing ===
+function editLabor(itemIdx, labIdx, field, val) {
+  const j = getJob(); if (!j) return;
+  if (field === 'rateType') j.items[itemIdx].labor[labIdx][field] = val;
+  else j.items[itemIdx].labor[labIdx][field] = parseFloat(val) || 0;
+  autoSave(); renderBudget();
+}
+function nudgeLabor(itemIdx, labIdx, field, delta) {
+  const j = getJob(); if (!j) return;
+  const l = j.items[itemIdx].labor[labIdx];
+  l[field] = Math.max(0, (l[field]||0) + delta);
+  autoSave(); renderBudget();
+}
+function removeLabor(itemIdx, labIdx) {
+  const j = getJob(); if (!j) return;
+  j.items[itemIdx].labor.splice(labIdx, 1);
+  autoSave(); renderBudget();
 }
 
-function updateMat(idx, field, val) {
+// === Item field updates ===
+function updateItemField(field, val) {
   const j = getJob(); if (!j) return;
   const item = j.items[currentItemIdx]; if (!item) return;
-  item.materials[idx][field] = parseFloat(val) || 0;
-  autoSave(); renderBudget();
-}
-function removeMat(idx) {
-  const j = getJob(); if (!j) return;
-  j.items[currentItemIdx].materials.splice(idx, 1);
-  autoSave(); renderBudget();
-}
-function updateLabor(idx, field, val) {
-  const j = getJob(); if (!j) return;
-  const item = j.items[currentItemIdx]; if (!item) return;
-  if (field === 'rateType') item.labor[idx][field] = val;
-  else item.labor[idx][field] = parseFloat(val) || 0;
-  autoSave(); renderBudget();
-}
-function removeLabor(idx) {
-  const j = getJob(); if (!j) return;
-  j.items[currentItemIdx].labor.splice(idx, 1);
-  autoSave(); renderBudget();
-}
-
-function updateBudgetItemField(field, val) {
-  const j = getJob(); if (!j) return;
-  const item = j.items[currentItemIdx]; if (!item) return;
-  if (field === 'markupPct' || field === 'expendables') item[field] = parseFloat(val) || 0;
+  if (field === 'markupPct') item[field] = parseFloat(val) || 0;
   else item[field] = val;
+  autoSave(); renderBudget();
+}
+
+function updateGlobalMarkup(val) {
+  const j = getJob(); if (!j) return;
+  j.globalMarkup = parseFloat(val) || 0;
+  autoSave(); renderBudget();
+}
+
+function deleteItem(idx) {
+  const j = getJob(); if (!j) return;
+  if (j.items.length <= 1) { toast('Need at least one item'); return; }
+  if (!confirm('Delete "' + j.items[idx].name + '"?')) return;
+  j.items.splice(idx, 1);
+  currentItemIdx = -1;
   autoSave(); renderBudget();
 }
 
@@ -1601,48 +1777,52 @@ function showMatDropdown() {
   const q = (input.value || '').toLowerCase();
   const dd = $('matDropdown');
   const allMats = settings.materials.concat(settings.customMaterials || []);
-  const filtered = q ? allMats.filter(m => m.name.toLowerCase().includes(q)).slice(0, 12) : allMats.slice(0, 12);
-  const isFav = (id) => (settings.favorites||[]).includes(id);
+  const favs = settings.favorites || [];
+  const filtered = q ? allMats.filter(m => m.name.toLowerCase().includes(q)).slice(0, 15) : allMats.slice(0, 15);
   dd.innerHTML = filtered.map(m => `<div class="cat-dropdown-item" onclick="addMaterialFromCatalog('${m.id}')">
-    <span class="cdi-name">${isFav(m.id)?'⭐ ':''}${esc(m.name)}</span>
+    <span class="cdi-name">${favs.includes(m.id)?'⭐ ':''}${esc(m.name)}</span>
     <span class="cdi-meta">${money(m.unitCost)} · ${esc(m.size||m.unit||'')}</span></div>`).join('');
   if (q && q.length > 1) {
-    dd.innerHTML += `<div class="cat-dropdown-add" onclick="addCustomMaterialInline('mat')">+ Add "${esc(input.value)}" as new material</div>`;
+    dd.innerHTML += `<div class="cat-dropdown-add" onclick="addCustomInline('mat')">+ Add "${esc(input.value)}" as new material</div>`;
   }
   dd.classList.add('show');
 }
 
 function addMaterialFromCatalog(catId) {
   const j = getJob(); if (!j) return;
-  const item = j.items[currentItemIdx]; if (!item) return;
+  const targetIdx = currentItemIdx === -1 ? 0 : currentItemIdx; // Overview → General item
+  const item = j.items[targetIdx]; if (!item) return;
   const allMats = settings.materials.concat(settings.customMaterials || []);
   const mat = allMats.find(m => m.id === catId);
   if (!mat) return;
-  item.materials.push({ id: uid(), name: mat.name, unitCost: mat.unitCost, qty: 1, waste: 0, size: mat.size || '', catalogId: catId });
+  item.materials.push({ id:uid(), name:mat.name, unitCost:mat.unitCost, qty:1, waste:0, size:mat.size||'', catalogId:catId });
   $('matDropdown').classList.remove('show');
   $('matSearchInput').value = '';
   autoSave(); renderBudget();
 }
 
-function addCustomMaterialInline(type) {
+function addCustomInline(type) {
   const j = getJob(); if (!j) return;
-  const item = j.items[currentItemIdx]; if (!item) return;
-  const name = type === 'mat' ? $('matSearchInput').value.trim() : $('laborSearchInput').value.trim();
+  const targetIdx = currentItemIdx === -1 ? 0 : currentItemIdx;
+  const item = j.items[targetIdx]; if (!item) return;
+  const inputEl = type === 'mat' ? $('matSearchInput') : $('laborSearchInput');
+  const name = (inputEl.value || '').trim();
   if (!name) return;
+
   if (type === 'mat') {
-    const newMat = { id: uid(), name, unitCost: 0, category: 'Custom', unit: 'ea', vendor: '', size: '', subcategory: '' };
+    const newMat = { id:uid(), name, unitCost:0, category:'Custom', unit:'ea', vendor:'Custom', size:'', subcategory:'' };
     if (!settings.customMaterials) settings.customMaterials = [];
     settings.customMaterials.push(newMat);
-    item.materials.push({ id: uid(), name, unitCost: 0, qty: 1, waste: 0, size: '', catalogId: newMat.id });
+    item.materials.push({ id:uid(), name, unitCost:0, qty:1, waste:0, size:'', catalogId:newMat.id });
     $('matDropdown').classList.remove('show');
     $('matSearchInput').value = '';
   } else {
-    item.labor.push({ id: uid(), role: name, rate: 0, qty: 0, rateType: 'hourly', otHours: 0, otMultiplier: 1.5, catalogId: '' });
+    item.labor.push({ id:uid(), role:name, rate:0, qty:0, rateType:'hourly', otHours:0, otMultiplier:1.5, catalogId:'' });
     $('laborDropdown').classList.remove('show');
     $('laborSearchInput').value = '';
   }
   autoSave(); renderBudget();
-  toast(`"${name}" added`);
+  toast('"' + name + '" added');
 }
 
 function showLaborDropdown() {
@@ -1655,60 +1835,54 @@ function showLaborDropdown() {
     <span class="cdi-name">${esc(r.name)}</span>
     <span class="cdi-meta">${money(r.rate)}/hr</span></div>`).join('');
   if (q && q.length > 1) {
-    dd.innerHTML += `<div class="cat-dropdown-add" onclick="addCustomMaterialInline('labor')">+ Add "${esc(input.value)}" as new role</div>`;
+    dd.innerHTML += `<div class="cat-dropdown-add" onclick="addCustomInline('labor')">+ Add "${esc(input.value)}" as new role</div>`;
   }
   dd.classList.add('show');
 }
 
 function addLaborFromCatalog(roleId) {
   const j = getJob(); if (!j) return;
-  const item = j.items[currentItemIdx]; if (!item) return;
+  const targetIdx = currentItemIdx === -1 ? 0 : currentItemIdx;
+  const item = j.items[targetIdx]; if (!item) return;
   const role = (settings.technicians||[]).find(r => r.id === roleId);
   if (!role) return;
-  item.labor.push({ id: uid(), role: role.name, rate: role.rate, qty: 8, rateType: role.rateType || 'hourly', otHours: 0, otMultiplier: role.otMultiplier || 1.5, catalogId: roleId });
+  item.labor.push({ id:uid(), role:role.name, rate:role.rate, qty:8, rateType:role.rateType||'hourly', otHours:0, otMultiplier:role.otMultiplier||1.5, catalogId:roleId });
   $('laborDropdown').classList.remove('show');
   $('laborSearchInput').value = '';
   autoSave(); renderBudget();
 }
 
-function closeMaterialDropdown(e) {
-  setTimeout(() => {
-    const dd1 = $('matDropdown'); if (dd1) dd1.classList.remove('show');
-    const dd2 = $('laborDropdown'); if (dd2) dd2.classList.remove('show');
-  }, 200);
-}
 
-
-// ===== CALCULATIONS =====
-function calcItemTotal(item) {
-  const materialCost = (item.materials||[]).reduce((sum, m) => sum + (m.unitCost||0) * (m.qty||0) * (1 + (m.waste||0)/100), 0);
-  const laborCost = (item.labor||[]).reduce((sum, l) => {
-    const isDaily = l.rateType === 'daily';
+// ===== CALCULATIONS (with global markup fallback) =====
+function calcItemTotal(item, job) {
+  const materialCost = (item.materials||[]).reduce((s, m) => s + (m.unitCost||0) * (m.qty||0) * (1 + (m.waste||0)/100), 0);
+  const laborCost = (item.labor||[]).reduce((s, l) => {
     const base = (l.rate||0) * (l.qty||0);
-    const ot = isDaily ? 0 : (l.otHours||0) * (l.rate||0) * (l.otMultiplier||1.5);
-    return sum + base + ot;
+    const ot = l.rateType === 'daily' ? 0 : (l.otHours||0) * (l.rate||0) * (l.otMultiplier||1.5);
+    return s + base + ot;
   }, 0);
-  const expendablesCost = item.expendables || 0;
-  const internalCost = materialCost + laborCost + expendablesCost;
-  const markupAmount = internalCost * ((item.markupPct||0) / 100);
+  const internalCost = materialCost + laborCost;
+  // Per-item markup overrides global; 0 = use global
+  const globalMk = job ? (job.globalMarkup || 0) : 0;
+  const effectiveMarkup = (item.markupPct > 0) ? item.markupPct : globalMk;
+  const markupAmount = internalCost * (effectiveMarkup / 100);
   const clientPrice = internalCost + markupAmount;
   const profit = markupAmount;
-  return { materialCost, laborCost, expendablesCost, internalCost, markupAmount, clientPrice, profit };
+  return { materialCost, laborCost, internalCost, markupAmount, clientPrice, profit, effectiveMarkup };
 }
 
 function calcJobTotal(j) {
-  let materialCost = 0, laborCost = 0, expendablesCost = 0, totalCost = 0, clientTotal = 0, profit = 0;
+  let materialCost = 0, laborCost = 0, totalCost = 0, clientTotal = 0, profit = 0;
   (j.items||[]).forEach(item => {
-    const t = calcItemTotal(item);
+    const t = calcItemTotal(item, j);
     materialCost += t.materialCost;
     laborCost += t.laborCost;
-    expendablesCost += t.expendablesCost;
     totalCost += t.internalCost;
     clientTotal += t.clientPrice;
     profit += t.profit;
   });
   clientTotal += (j.shipping || 0);
-  return { materialCost, laborCost, expendablesCost, totalCost, clientTotal, profit, shipping: j.shipping || 0 };
+  return { materialCost, laborCost, totalCost, clientTotal, profit, shipping: j.shipping || 0 };
 }
 
 // ===== SUMMARY =====
@@ -1722,14 +1896,14 @@ function renderSummary() {
   $('summaryContent').innerHTML = `
     <h3 style="margin-bottom:16px;">Cost Breakdown</h3>
     ${j.items.map((item, idx) => {
-      const it = calcItemTotal(item);
+      const it = calcItemTotal(item, j);
       return `<div style="margin-bottom:12px;padding:12px;background:var(--bg-3);border-radius:var(--radius);">
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <strong>${esc(item.name)}</strong>
           <span style="font-family:var(--mono);font-weight:600;">${money(it.clientPrice)}</span>
         </div>
         <div style="font-size:0.78rem;color:var(--text-2);margin-top:4px;">
-          Mat: ${money(it.materialCost)} · Labor: ${money(it.laborCost)} · Expend: ${money(item.expendables||0)} · Markup: ${pct(item.markupPct)}
+          Mat: ${money(it.materialCost)} · Labor: ${money(it.laborCost)} · Markup: ${pct(it.effectiveMarkup)}
         </div>
       </div>`;
     }).join('')}
@@ -1817,7 +1991,7 @@ function generateClientInvoice() {
     id: uid(), type: 'client', jobId: j.id, jobTitle: j.title, date: $('invDate').value, dueDate: $('invDueDate').value,
     fromName: $('invFromName').value, fromTitle: $('invFromTitle').value, fromCo: $('invFromCo').value, fromEmail: $('invFromEmail').value,
     toName: $('invToName').value, po: $('invPO').value, showLineItems: showLines, showDescriptions: showDesc,
-    items: j.items.map(item => ({ name: item.name, description: item.description, price: calcItemTotal(item).clientPrice })),
+    items: j.items.map(item => ({ name: item.name, description: item.description, price: calcItemTotal(item, j).clientPrice })),
     subtotal: t.clientTotal, shipping: j.shipping, taxRate: j.taxRate, taxAmt, total: grand,
     status: 'unpaid', installments: [], createdAt: Date.now()
   };
@@ -1837,9 +2011,9 @@ function openInternalBudget() {
   const inv = {
     id: uid(), type: 'internal', jobId: j.id, jobTitle: j.title, date: today(),
     items: j.items.map(item => {
-      const it = calcItemTotal(item);
-      return { name: item.name, description: item.description, materials: item.materials, labor: item.labor, expendables: item.expendables,
-        materialCost: it.materialCost, laborCost: it.laborCost, markupPct: item.markupPct, clientPrice: it.clientPrice, profit: it.profit };
+      const it = calcItemTotal(item, j);
+      return { name: item.name, description: item.description, materials: item.materials, labor: item.labor,
+        materialCost: it.materialCost, laborCost: it.laborCost, markupPct: it.effectiveMarkup, clientPrice: it.clientPrice, profit: it.profit };
     }),
     totalCost: t.totalCost, clientTotal: t.clientTotal, profit: t.profit, shipping: j.shipping, taxAmt, total: grand,
     createdAt: Date.now()
@@ -1913,7 +2087,7 @@ function showInternalPreview(inv) {
       html += `</tbody></table>`;
     }
     html += `<div style="display:flex;justify-content:space-between;margin:8px 0 16px;font-size:0.85rem;">
-      <span>Cost: ${money(item.materialCost+item.laborCost+(item.expendables||0))} · Markup: ${pct(item.markupPct)} · Client: <strong>${money(item.clientPrice)}</strong></span>
+      <span>Cost: ${money(item.materialCost+item.laborCost)} · Markup: ${pct(item.markupPct)} · Client: <strong>${money(item.clientPrice)}</strong></span>
       <span style="color:green;font-weight:600;">Profit: ${money(item.profit)}</span></div>`;
   });
 
