@@ -6,7 +6,7 @@ const ASSETS = [
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   '/icons/logo-44.png',
-  'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap',
+  'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap',
   'https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js',
   'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js',
   'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js'
