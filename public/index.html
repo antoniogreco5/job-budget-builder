@@ -1670,32 +1670,31 @@ function renderEditorPanel() {
         <thead><tr>
           ${isOverview ? '<th>Item</th>' : ''}
           <th>Material</th><th>Size</th><th style="text-align:right;">Unit Cost</th><th style="text-align:right;">Qty</th><th style="text-align:right;">Waste%</th><th style="text-align:right;">Total</th>
-          ${!isOverview ? '<th style="width:36px;"></th>' : ''}
+          <th style="width:36px;"></th>
         </tr></thead>
         <tbody>${mats.map((m, i) => {
           const lineTotal = (m.unitCost||0) * (m.qty||0) * (1 + (m.waste||0)/100);
-          const ro = isOverview;
-          const idx = ro ? m._matIdx : i;
-          const iIdx = ro ? m._itemIdx : currentItemIdx;
-          const itemOpts = ro ? j.items.map((it,ii) => `<option value="${ii}"${ii===m._itemIdx?' selected':''}>${esc(it.name)}</option>`).join('') : '';
+          const idx = isOverview ? m._matIdx : i;
+          const iIdx = isOverview ? m._itemIdx : currentItemIdx;
+          const itemOpts = isOverview ? j.items.map((it,ii) => `<option value="${ii}"${ii===m._itemIdx?' selected':''}>${esc(it.name)}</option>`).join('') : '';
           return `<tr>
-            ${ro ? `<td><select class="form-select" style="padding:2px 4px;font-size:.75rem;width:110px;" onchange="reassignMat(${m._itemIdx},${idx},parseInt(this.value))">${itemOpts}</select></td>` : ''}
+            ${isOverview ? `<td><select class="form-select" style="padding:2px 4px;font-size:.75rem;width:110px;" onchange="reassignMat(${m._itemIdx},${idx},parseInt(this.value))">${itemOpts}</select></td>` : ''}
             <td>${esc(m.name)}</td>
             <td style="font-size:.78rem;color:var(--text-2);">${esc(m.size||'')}</td>
-            <td>${ro ? `<span style="text-align:right;display:block;">${money(m.unitCost)}</span>` : `<input type="number" class="tbl-input tbl-input-sm" value="${m.unitCost||0}" onchange="editMat(${iIdx},${idx},'unitCost',this.value)" step="0.01" min="0">`}</td>
-            <td>${ro ? `<span style="text-align:right;display:block;">${m.qty||0}</span>` : `<div class="qty-wrap"><div class="qty-btn" onclick="nudgeMat(${iIdx},${idx},'qty',-1)">−</div><input type="number" class="tbl-input tbl-input-xs" value="${m.qty||0}" onchange="editMat(${iIdx},${idx},'qty',this.value)" min="0"><div class="qty-btn" onclick="nudgeMat(${iIdx},${idx},'qty',1)">+</div></div>`}</td>
-            <td>${ro ? `<span style="text-align:right;display:block;">${m.waste||0}</span>` : `<input type="number" class="tbl-input tbl-input-xs" value="${m.waste||0}" onchange="editMat(${iIdx},${idx},'waste',this.value)" min="0" max="100">`}</td>
+            <td><input type="number" class="tbl-input tbl-input-sm" value="${m.unitCost||0}" onchange="editMat(${iIdx},${idx},'unitCost',this.value)" step="0.01" min="0"></td>
+            <td><div class="qty-wrap"><div class="qty-btn" onclick="nudgeMat(${iIdx},${idx},'qty',-1)">−</div><input type="number" class="tbl-input tbl-input-xs" value="${m.qty||0}" onchange="editMat(${iIdx},${idx},'qty',this.value)" min="0"><div class="qty-btn" onclick="nudgeMat(${iIdx},${idx},'qty',1)">+</div></div></td>
+            <td><input type="number" class="tbl-input tbl-input-xs" value="${m.waste||0}" onchange="editMat(${iIdx},${idx},'waste',this.value)" min="0" max="100"></td>
             <td style="text-align:right;font-weight:600;">${money(lineTotal)}</td>
-            ${!ro ? `<td><button class="btn btn-ghost btn-icon btn-sm" onclick="removeMat(${iIdx},${idx})" title="Remove">&times;</button></td>` : ''}
+            <td><button class="btn btn-ghost btn-icon btn-sm" onclick="removeMat(${iIdx},${idx})" title="Remove">&times;</button></td>
           </tr>`;
         }).join('')}
-        ${mats.length === 0 ? `<tr><td colspan="${isOverview?8:7}" style="text-align:center;color:var(--text-3);padding:20px;">No materials added yet</td></tr>` : ''}
+        ${mats.length === 0 ? `<tr><td colspan="${isOverview?9:8}" style="text-align:center;color:var(--text-3);padding:20px;">No materials added yet</td></tr>` : ''}
         </tbody>
         <tfoot><tr>
-          <td colspan="${isOverview?5:4}" style="text-align:right;font-family:var(--font-display);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--chrome-mid);">Materials Total</td>
+          <td colspan="${isOverview?6:5}" style="text-align:right;font-family:var(--font-display);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--chrome-mid);">Materials Total</td>
           <td></td>
           <td style="text-align:right;font-weight:700;font-size:1rem;border-top:2px solid var(--border-light);">${money(totalMat)}</td>
-          ${!isOverview ? '<td></td>' : ''}
+          <td></td>
         </tr></tfoot>
       </table>
       <!-- Quick-Add -->
@@ -1726,35 +1725,34 @@ function renderEditorPanel() {
         <thead><tr>
           ${isOverview ? '<th>Item</th>' : ''}
           <th>Role</th><th>Type</th><th style="text-align:right;">Rate</th><th style="text-align:right;">${'Hrs/Days'}</th><th style="text-align:right;">OT Hrs</th><th style="text-align:right;">Total</th>
-          ${!isOverview ? '<th style="width:36px;"></th>' : ''}
+          <th style="width:36px;"></th>
         </tr></thead>
         <tbody>${labors.map((l, i) => {
           const isDaily = l.rateType === 'daily';
           const base = (l.rate||0)*(l.qty||0);
           const ot = isDaily ? 0 : (l.otHours||0)*(l.rate||0)*(l.otMultiplier||1.5);
           const lineTotal = base + ot;
-          const ro = isOverview;
-          const idx = ro ? l._labIdx : i;
-          const iIdx = ro ? l._itemIdx : currentItemIdx;
-          const labItemOpts = ro ? j.items.map((it,ii) => `<option value="${ii}"${ii===l._itemIdx?' selected':''}>${esc(it.name)}</option>`).join('') : '';
+          const idx = isOverview ? l._labIdx : i;
+          const iIdx = isOverview ? l._itemIdx : currentItemIdx;
+          const labItemOpts = isOverview ? j.items.map((it,ii) => `<option value="${ii}"${ii===l._itemIdx?' selected':''}>${esc(it.name)}</option>`).join('') : '';
           return `<tr>
-            ${ro ? `<td><select class="form-select" style="padding:2px 4px;font-size:.75rem;width:110px;" onchange="reassignLabor(${l._itemIdx},${idx},parseInt(this.value))">${labItemOpts}</select></td>` : ''}
+            ${isOverview ? `<td><select class="form-select" style="padding:2px 4px;font-size:.75rem;width:110px;" onchange="reassignLabor(${l._itemIdx},${idx},parseInt(this.value))">${labItemOpts}</select></td>` : ''}
             <td>${esc(l.role)}</td>
-            <td>${ro ? (isDaily?'Daily':'Hourly') : `<select class="form-select" style="padding:3px 6px;font-size:.78rem;width:72px;" onchange="editLabor(${iIdx},${idx},'rateType',this.value)"><option value="hourly"${!isDaily?' selected':''}>Hourly</option><option value="daily"${isDaily?' selected':''}>Daily</option></select>`}</td>
-            <td>${ro ? `<span style="text-align:right;display:block;">${money(l.rate)}</span>` : `<input type="number" class="tbl-input tbl-input-sm" value="${l.rate||0}" onchange="editLabor(${iIdx},${idx},'rate',this.value)" step="0.01" min="0">`}</td>
-            <td>${ro ? `<span style="text-align:right;display:block;">${l.qty||0}</span>` : `<div class="qty-wrap"><div class="qty-btn" onclick="nudgeLabor(${iIdx},${idx},'qty',-0.5)">−</div><input type="number" class="tbl-input tbl-input-xs" value="${l.qty||0}" onchange="editLabor(${iIdx},${idx},'qty',this.value)" min="0" step="0.5"><div class="qty-btn" onclick="nudgeLabor(${iIdx},${idx},'qty',0.5)">+</div></div>`}</td>
-            <td>${isDaily ? '<span style="color:var(--text-3);text-align:right;display:block;">—</span>' : (ro ? `<span style="text-align:right;display:block;">${l.otHours||0}</span>` : `<input type="number" class="tbl-input tbl-input-xs" value="${l.otHours||0}" onchange="editLabor(${iIdx},${idx},'otHours',this.value)" min="0" step="0.5">`)}</td>
+            <td><select class="form-select" style="padding:3px 6px;font-size:.78rem;width:72px;" onchange="editLabor(${iIdx},${idx},'rateType',this.value)"><option value="hourly"${!isDaily?' selected':''}>Hourly</option><option value="daily"${isDaily?' selected':''}>Daily</option></select></td>
+            <td><input type="number" class="tbl-input tbl-input-sm" value="${l.rate||0}" onchange="editLabor(${iIdx},${idx},'rate',this.value)" step="0.01" min="0"></td>
+            <td><div class="qty-wrap"><div class="qty-btn" onclick="nudgeLabor(${iIdx},${idx},'qty',-0.5)">−</div><input type="number" class="tbl-input tbl-input-xs" value="${l.qty||0}" onchange="editLabor(${iIdx},${idx},'qty',this.value)" min="0" step="0.5"><div class="qty-btn" onclick="nudgeLabor(${iIdx},${idx},'qty',0.5)">+</div></div></td>
+            <td>${isDaily ? '<span style="color:var(--text-3);text-align:right;display:block;">—</span>' : `<input type="number" class="tbl-input tbl-input-xs" value="${l.otHours||0}" onchange="editLabor(${iIdx},${idx},'otHours',this.value)" min="0" step="0.5">`}</td>
             <td style="text-align:right;font-weight:600;">${money(lineTotal)}</td>
-            ${!ro ? `<td><button class="btn btn-ghost btn-icon btn-sm" onclick="removeLabor(${iIdx},${idx})" title="Remove">&times;</button></td>` : ''}
+            <td><button class="btn btn-ghost btn-icon btn-sm" onclick="removeLabor(${iIdx},${idx})" title="Remove">&times;</button></td>
           </tr>`;
         }).join('')}
-        ${labors.length === 0 ? `<tr><td colspan="${isOverview?8:7}" style="text-align:center;color:var(--text-3);padding:20px;">No labor added yet</td></tr>` : ''}
+        ${labors.length === 0 ? `<tr><td colspan="${isOverview?9:8}" style="text-align:center;color:var(--text-3);padding:20px;">No labor added yet</td></tr>` : ''}
         </tbody>
         <tfoot><tr>
-          <td colspan="${isOverview?5:4}" style="text-align:right;font-family:var(--font-display);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--chrome-mid);">Labor Total</td>
+          <td colspan="${isOverview?6:5}" style="text-align:right;font-family:var(--font-display);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--chrome-mid);">Labor Total</td>
           <td></td>
           <td style="text-align:right;font-weight:700;font-size:1rem;border-top:2px solid var(--border-light);">${money(totalLab)}</td>
-          ${!isOverview ? '<td></td>' : ''}
+          <td></td>
         </tr></tfoot>
       </table>
       <!-- Quick-Add Labor -->
@@ -2123,6 +2121,14 @@ function openInvoiceGenerator() {
         <input type="checkbox" id="invShowDescriptions" checked> Show descriptions
       </label>
     </div>
+    <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
+    <div class="form-row" style="align-items:end;">
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Split into Installments</label>
+        <input type="number" class="form-input form-input-mono" id="invInstallments" value="1" min="1" max="12" style="width:80px;" oninput="previewInstallments()">
+      </div>
+      <div id="installmentPreview" style="flex:1;font-size:.85rem;color:var(--text-2);padding-bottom:4px;"></div>
+    </div>
     <div style="padding:12px;background:var(--bg-3);border-radius:var(--radius);font-size:0.95rem;font-weight:700;">
       Grand Total: <span style="background:var(--chrome-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${money(grand)}</span>
     </div>`;
@@ -2140,20 +2146,48 @@ function generateClientInvoice() {
   const grand = t.clientTotal + taxAmt;
   const showLines = $('invShowLineItems').checked;
   const showDesc = $('invShowDescriptions').checked;
+  const numInst = parseInt($('invInstallments').value) || 1;
+
+  // Build installments if > 1
+  const installments = [];
+  if (numInst > 1) {
+    const perPayment = Math.round((grand / numInst) * 100) / 100;
+    let remaining = grand;
+    for (let i = 0; i < numInst; i++) {
+      const isLast = i === numInst - 1;
+      const amt = isLast ? Math.round(remaining * 100) / 100 : perPayment;
+      remaining -= amt;
+      installments.push({ label: 'Payment ' + (i+1) + ' of ' + numInst, amount: amt, dueDate: '', status: 'unpaid' });
+    }
+  }
 
   const inv = {
-    id: uid(), type: 'client', jobId: j.id, jobTitle: j.title, date: $('invDate').value, dueDate: $('invDueDate').value,
+    id: uid(), type: 'client', jobId: j.id, jobTitle: j.title||'Untitled', date: $('invDate').value, dueDate: $('invDueDate').value,
     fromName: $('invFromName').value, fromTitle: $('invFromTitle').value, fromCo: $('invFromCo').value, fromEmail: $('invFromEmail').value,
     toName: $('invToName').value, po: $('invPO').value, showLineItems: showLines, showDescriptions: showDesc,
     items: j.items.map(item => ({ name: item.name, description: item.description, price: calcItemTotal(item, j).clientPrice })),
     subtotal: t.clientTotal, shipping: j.shipping, taxRate: j.taxRate, taxAmt, total: grand,
-    status: 'unpaid', installments: [], createdAt: Date.now()
+    status: numInst > 1 ? 'unpaid' : 'unpaid', installments, createdAt: Date.now()
   };
   invoices.push(inv);
   autoSave();
   closeInvoiceModal();
   showInvoicePreview(inv);
-  toast('Invoice saved');
+  toast('Invoice saved' + (numInst > 1 ? ' with ' + numInst + ' installments' : ''));
+}
+
+function previewInstallments() {
+  const num = parseInt($('invInstallments').value) || 1;
+  const el = $('installmentPreview');
+  if (!el) return;
+  if (num <= 1) { el.innerHTML = ''; return; }
+  // Calculate grand total from current job
+  const j = getJob(); if (!j) return;
+  const t = calcJobTotal(j);
+  const taxAmt = j.taxEnabled !== false && j.taxRate ? t.clientTotal * (j.taxRate/100) : 0;
+  const grand = t.clientTotal + taxAmt;
+  const perPayment = grand / num;
+  el.innerHTML = `${num} payments of <strong style="color:var(--text-0);">${money(perPayment)}</strong> each`;
 }
 
 function openInternalBudget() {
@@ -2204,24 +2238,24 @@ function showInvoicePreview(inv) {
         ${inv.po?`<div>PO: <strong style="color:#111;">${esc(inv.po)}</strong></div>`:''}
       </div>
     </div>
-    <!-- Line Items -->
+    <!-- Line Items — always show scene breakdown with prices -->
     <div style="padding:20px 28px;">`;
 
-  if (inv.showLineItems !== false) {
-    html += `<table style="width:100%;border-collapse:collapse;"><thead><tr>
-      <th style="text-align:left;padding:8px 0;font-family:'Orbitron',sans-serif;font-size:.6rem;text-transform:uppercase;letter-spacing:1px;color:#888;border-bottom:2px solid #ddd;">Item</th>
-      ${inv.showDescriptions!==false?'<th style="text-align:left;padding:8px 0;font-family:\'Orbitron\',sans-serif;font-size:.6rem;text-transform:uppercase;letter-spacing:1px;color:#888;border-bottom:2px solid #ddd;">Description</th>':''}
-      <th style="text-align:right;padding:8px 0;font-family:'Orbitron',sans-serif;font-size:.6rem;text-transform:uppercase;letter-spacing:1px;color:#888;border-bottom:2px solid #ddd;">Amount</th>
-    </tr></thead><tbody>`;
-    inv.items.forEach(item => {
-      html += `<tr>
-        <td style="padding:10px 0;font-weight:600;font-size:.95rem;border-bottom:1px solid #eee;">${esc(item.name)}</td>
-        ${inv.showDescriptions!==false?`<td style="padding:10px 0;font-size:.85rem;color:#666;border-bottom:1px solid #eee;">${esc((item.description||'').substring(0,120))}</td>`:''}
-        <td style="padding:10px 0;text-align:right;font-weight:700;font-size:.95rem;border-bottom:1px solid #eee;">${money(item.price || item.clientPrice || 0)}</td>
-      </tr>`;
-    });
-    html += `</tbody></table>`;
-  }
+  // Always show items with prices
+  html += `<table style="width:100%;border-collapse:collapse;"><thead><tr>
+    <th style="text-align:left;padding:8px 0;font-family:'Orbitron',sans-serif;font-size:.6rem;text-transform:uppercase;letter-spacing:1px;color:#888;border-bottom:2px solid #ddd;">Item</th>
+    ${inv.showDescriptions!==false?'<th style="text-align:left;padding:8px 0;font-family:\'Orbitron\',sans-serif;font-size:.6rem;text-transform:uppercase;letter-spacing:1px;color:#888;border-bottom:2px solid #ddd;">Description</th>':''}
+    <th style="text-align:right;padding:8px 0;font-family:'Orbitron',sans-serif;font-size:.6rem;text-transform:uppercase;letter-spacing:1px;color:#888;border-bottom:2px solid #ddd;">Amount</th>
+  </tr></thead><tbody>`;
+  inv.items.forEach(item => {
+    const price = item.price || item.clientPrice || 0;
+    html += `<tr>
+      <td style="padding:10px 0;font-weight:600;font-size:.95rem;border-bottom:1px solid #eee;">${esc(item.name)}</td>
+      ${inv.showDescriptions!==false?`<td style="padding:10px 0;font-size:.85rem;color:#666;border-bottom:1px solid #eee;">${esc((item.description||'').substring(0,120))}</td>`:''}
+      <td style="padding:10px 0;text-align:right;font-weight:700;font-size:.95rem;border-bottom:1px solid #eee;">${inv.showLineItems!==false ? money(price) : ''}</td>
+    </tr>`;
+  });
+  html += `</tbody></table>`;
 
   // Totals
   html += `<div style="margin-top:24px;margin-left:auto;max-width:280px;">`;
@@ -2232,7 +2266,29 @@ function showInvoicePreview(inv) {
   html += `<div style="display:flex;justify-content:space-between;padding:12px 0 0;margin-top:8px;border-top:3px solid #1a1a1e;font-size:1.2rem;">
     <span style="font-family:'Orbitron',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:1px;">TOTAL DUE</span>
     <span style="font-weight:800;color:#111;">${money(inv.total)}</span></div>`;
-  html += `</div></div></div>`;
+  html += `</div>`;
+
+  // Installment schedule
+  if (inv.installments && inv.installments.length > 1) {
+    html += `<div style="margin-top:28px;padding-top:20px;border-top:1px solid #ddd;">
+      <div style="font-family:'Orbitron',sans-serif;font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:10px;">Payment Schedule</div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr>
+          <th style="text-align:left;padding:6px 0;font-size:.7rem;color:#888;border-bottom:1px solid #ddd;">Payment</th>
+          <th style="text-align:right;padding:6px 0;font-size:.7rem;color:#888;border-bottom:1px solid #ddd;">Amount</th>
+          <th style="text-align:right;padding:6px 0;font-size:.7rem;color:#888;border-bottom:1px solid #ddd;">Status</th>
+        </tr></thead><tbody>`;
+    inv.installments.forEach(inst => {
+      html += `<tr>
+        <td style="padding:8px 0;font-size:.9rem;border-bottom:1px solid #eee;">${esc(inst.label)}</td>
+        <td style="padding:8px 0;text-align:right;font-weight:600;font-size:.9rem;border-bottom:1px solid #eee;">${money(inst.amount)}</td>
+        <td style="padding:8px 0;text-align:right;font-size:.82rem;border-bottom:1px solid #eee;color:${inst.status==='paid'?'#22c55e':'#888'};">${inst.status==='paid'?'Paid':'Due'}</td>
+      </tr>`;
+    });
+    html += `</tbody></table></div>`;
+  }
+
+  html += `</div></div>`;
 
   body.innerHTML = html;
   $('invoiceModalFooter').innerHTML = `
