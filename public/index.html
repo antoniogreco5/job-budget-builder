@@ -361,13 +361,17 @@ a:hover { text-decoration:underline; color:var(--purple-bright); }
 .tbl-input:hover { border-color:var(--border); background:var(--bg-input); }
 .tbl-input:focus { border-color:var(--purple-primary); background:var(--bg-input); outline:none; box-shadow:0 0 8px rgba(147,51,234,0.2); }
 .tbl-input-name { text-align:left; font-weight:500; }
-.tbl-input-sm { width:60px; }
-.tbl-input-xs { width:50px; }
+.tbl-input-sm { width:70px; }
+.tbl-input-xs { width:55px; }
 
-/* EDITOR — Qty Buttons */
-.qty-wrap { display:flex; align-items:center; gap:2px; }
-.qty-btn { width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; color:var(--text-2); background:var(--bg-4); border:1px solid var(--border); border-radius:4px; cursor:pointer; transition:all 150ms; line-height:1; }
+/* Qty +/- buttons */
+.qty-wrap { display:inline-flex; align-items:center; gap:2px; justify-content:flex-end; }
+.qty-btn { width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; color:var(--text-2); background:var(--bg-4); border:1px solid var(--border); border-radius:4px; cursor:pointer; transition:all 150ms; line-height:1; padding:0; }
 .qty-btn:hover { color:var(--text-0); border-color:var(--purple-primary); background:rgba(147,51,234,0.15); }
+
+/* Numeric table cells — right-align consistently */
+.tbl td.num, .tbl th.num { text-align:right; }
+.tbl td.num-cell { text-align:right; padding-right:6px; }
 
 /* EDITOR — Quick-Add Bar */
 .quick-add { display:flex; gap:8px; align-items:center; padding:10px 0; border-top:1px solid var(--border); margin-top:8px; }
@@ -1681,11 +1685,11 @@ function renderEditorPanel() {
             ${isOverview ? `<td><select class="form-select" style="padding:2px 4px;font-size:.75rem;width:110px;" onchange="reassignMat(${m._itemIdx},${idx},parseInt(this.value))">${itemOpts}</select></td>` : ''}
             <td>${esc(m.name)}</td>
             <td style="font-size:.78rem;color:var(--text-2);">${esc(m.size||'')}</td>
-            <td><input type="number" class="tbl-input tbl-input-sm" value="${m.unitCost||0}" onchange="editMat(${iIdx},${idx},'unitCost',this.value)" step="0.01" min="0"></td>
-            <td><div class="qty-wrap"><div class="qty-btn" onclick="nudgeMat(${iIdx},${idx},'qty',-1)">−</div><input type="number" class="tbl-input tbl-input-xs" value="${m.qty||0}" onchange="editMat(${iIdx},${idx},'qty',this.value)" min="0"><div class="qty-btn" onclick="nudgeMat(${iIdx},${idx},'qty',1)">+</div></div></td>
-            <td><input type="number" class="tbl-input tbl-input-xs" value="${m.waste||0}" onchange="editMat(${iIdx},${idx},'waste',this.value)" min="0" max="100"></td>
+            <td style="text-align:right;"><input type="number" class="tbl-input tbl-input-sm" value="${m.unitCost||0}" onchange="editMat(${iIdx},${idx},'unitCost',this.value)" step="0.01" min="0"></td>
+            <td style="text-align:right;"><div class="qty-wrap"><div class="qty-btn" onclick="nudgeMat(${iIdx},${idx},'qty',-1)">−</div><input type="number" class="tbl-input tbl-input-xs" value="${m.qty||0}" onchange="editMat(${iIdx},${idx},'qty',this.value)" min="0"><div class="qty-btn" onclick="nudgeMat(${iIdx},${idx},'qty',1)">+</div></div></td>
+            <td style="text-align:right;"><input type="number" class="tbl-input tbl-input-xs" value="${m.waste||0}" onchange="editMat(${iIdx},${idx},'waste',this.value)" min="0" max="100"></td>
             <td style="text-align:right;font-weight:600;">${money(lineTotal)}</td>
-            <td><button class="btn btn-ghost btn-icon btn-sm" onclick="removeMat(${iIdx},${idx})" title="Remove">&times;</button></td>
+            <td style="text-align:center;"><button class="btn btn-ghost btn-icon btn-sm" onclick="removeMat(${iIdx},${idx})" title="Remove">&times;</button></td>
           </tr>`;
         }).join('')}
         ${mats.length === 0 ? `<tr><td colspan="${isOverview?9:8}" style="text-align:center;color:var(--text-3);padding:20px;">No materials added yet</td></tr>` : ''}
@@ -1738,12 +1742,12 @@ function renderEditorPanel() {
           return `<tr>
             ${isOverview ? `<td><select class="form-select" style="padding:2px 4px;font-size:.75rem;width:110px;" onchange="reassignLabor(${l._itemIdx},${idx},parseInt(this.value))">${labItemOpts}</select></td>` : ''}
             <td>${esc(l.role)}</td>
-            <td><select class="form-select" style="padding:3px 6px;font-size:.78rem;width:72px;" onchange="editLabor(${iIdx},${idx},'rateType',this.value)"><option value="hourly"${!isDaily?' selected':''}>Hourly</option><option value="daily"${isDaily?' selected':''}>Daily</option></select></td>
-            <td><input type="number" class="tbl-input tbl-input-sm" value="${l.rate||0}" onchange="editLabor(${iIdx},${idx},'rate',this.value)" step="0.01" min="0"></td>
-            <td><div class="qty-wrap"><div class="qty-btn" onclick="nudgeLabor(${iIdx},${idx},'qty',-0.5)">−</div><input type="number" class="tbl-input tbl-input-xs" value="${l.qty||0}" onchange="editLabor(${iIdx},${idx},'qty',this.value)" min="0" step="0.5"><div class="qty-btn" onclick="nudgeLabor(${iIdx},${idx},'qty',0.5)">+</div></div></td>
-            <td>${isDaily ? '<span style="color:var(--text-3);text-align:right;display:block;">—</span>' : `<input type="number" class="tbl-input tbl-input-xs" value="${l.otHours||0}" onchange="editLabor(${iIdx},${idx},'otHours',this.value)" min="0" step="0.5">`}</td>
+            <td style="text-align:center;"><select class="form-select" style="padding:3px 6px;font-size:.78rem;width:72px;" onchange="editLabor(${iIdx},${idx},'rateType',this.value)"><option value="hourly"${!isDaily?' selected':''}>Hourly</option><option value="daily"${isDaily?' selected':''}>Daily</option></select></td>
+            <td style="text-align:right;"><input type="number" class="tbl-input tbl-input-sm" value="${l.rate||0}" onchange="editLabor(${iIdx},${idx},'rate',this.value)" step="0.01" min="0"></td>
+            <td style="text-align:right;"><div class="qty-wrap"><div class="qty-btn" onclick="nudgeLabor(${iIdx},${idx},'qty',-0.5)">−</div><input type="number" class="tbl-input tbl-input-xs" value="${l.qty||0}" onchange="editLabor(${iIdx},${idx},'qty',this.value)" min="0" step="0.5"><div class="qty-btn" onclick="nudgeLabor(${iIdx},${idx},'qty',0.5)">+</div></div></td>
+            <td style="text-align:right;">${isDaily ? '<span style="color:var(--text-3);">—</span>' : `<input type="number" class="tbl-input tbl-input-xs" value="${l.otHours||0}" onchange="editLabor(${iIdx},${idx},'otHours',this.value)" min="0" step="0.5">`}</td>
             <td style="text-align:right;font-weight:600;">${money(lineTotal)}</td>
-            <td><button class="btn btn-ghost btn-icon btn-sm" onclick="removeLabor(${iIdx},${idx})" title="Remove">&times;</button></td>
+            <td style="text-align:center;"><button class="btn btn-ghost btn-icon btn-sm" onclick="removeLabor(${iIdx},${idx})" title="Remove">&times;</button></td>
           </tr>`;
         }).join('')}
         ${labors.length === 0 ? `<tr><td colspan="${isOverview?9:8}" style="text-align:center;color:var(--text-3);padding:20px;">No labor added yet</td></tr>` : ''}
@@ -2122,12 +2126,15 @@ function openInvoiceGenerator() {
       </label>
     </div>
     <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
-    <div class="form-row" style="align-items:end;">
-      <div class="form-group" style="margin:0;">
-        <label class="form-label">Split into Installments</label>
-        <input type="number" class="form-input form-input-mono" id="invInstallments" value="1" min="1" max="12" style="width:80px;" oninput="previewInstallments()">
+    <div style="margin-bottom:12px;">
+      <div class="form-row" style="align-items:end;">
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Split into Installments</label>
+          <input type="number" class="form-input form-input-mono" id="invInstallments" value="1" min="1" max="12" style="width:80px;" oninput="renderInstallmentDates()">
+        </div>
+        <div id="installmentPreview" style="flex:1;font-size:.85rem;color:var(--text-2);padding-bottom:4px;"></div>
       </div>
-      <div id="installmentPreview" style="flex:1;font-size:.85rem;color:var(--text-2);padding-bottom:4px;"></div>
+      <div id="installmentDatesArea" style="margin-top:10px;"></div>
     </div>
     <div style="padding:12px;background:var(--bg-3);border-radius:var(--radius);font-size:0.95rem;font-weight:700;">
       Grand Total: <span style="background:var(--chrome-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${money(grand)}</span>
@@ -2157,7 +2164,9 @@ function generateClientInvoice() {
       const isLast = i === numInst - 1;
       const amt = isLast ? Math.round(remaining * 100) / 100 : perPayment;
       remaining -= amt;
-      installments.push({ label: 'Payment ' + (i+1) + ' of ' + numInst, amount: amt, dueDate: '', status: 'unpaid' });
+      const dueDateEl = $('instDate' + i);
+      const dueDate = dueDateEl ? dueDateEl.value : '';
+      installments.push({ label: 'Payment ' + (i+1) + ' of ' + numInst, amount: amt, dueDate, status: 'unpaid' });
     }
   }
 
@@ -2165,6 +2174,7 @@ function generateClientInvoice() {
     id: uid(), type: 'client', jobId: j.id, jobTitle: j.title||'Untitled', date: $('invDate').value, dueDate: $('invDueDate').value,
     fromName: $('invFromName').value, fromTitle: $('invFromTitle').value, fromCo: $('invFromCo').value, fromEmail: $('invFromEmail').value,
     toName: $('invToName').value, po: $('invPO').value, showLineItems: showLines, showDescriptions: showDesc,
+    jobClient: j.client, jobLocation: j.location, jobType: j.jobType, jobDate: j.date,
     items: j.items.map(item => ({ name: item.name, description: item.description, price: calcItemTotal(item, j).clientPrice })),
     subtotal: t.clientTotal, shipping: j.shipping, taxRate: j.taxRate, taxAmt, total: grand,
     status: numInst > 1 ? 'unpaid' : 'unpaid', installments, createdAt: Date.now()
@@ -2176,18 +2186,32 @@ function generateClientInvoice() {
   toast('Invoice saved' + (numInst > 1 ? ' with ' + numInst + ' installments' : ''));
 }
 
-function previewInstallments() {
+function renderInstallmentDates() {
   const num = parseInt($('invInstallments').value) || 1;
-  const el = $('installmentPreview');
-  if (!el) return;
-  if (num <= 1) { el.innerHTML = ''; return; }
-  // Calculate grand total from current job
+  const preview = $('installmentPreview');
+  const area = $('installmentDatesArea');
+  if (num <= 1) { preview.innerHTML = ''; area.innerHTML = ''; return; }
+
   const j = getJob(); if (!j) return;
   const t = calcJobTotal(j);
   const taxAmt = j.taxEnabled !== false && j.taxRate ? t.clientTotal * (j.taxRate/100) : 0;
   const grand = t.clientTotal + taxAmt;
-  const perPayment = grand / num;
-  el.innerHTML = `${num} payments of <strong style="color:var(--text-0);">${money(perPayment)}</strong> each`;
+  const perPayment = Math.round((grand / num) * 100) / 100;
+
+  preview.innerHTML = `${num} payments of <strong style="color:var(--text-0);">${money(perPayment)}</strong> each`;
+
+  let datesHtml = '';
+  for (let i = 0; i < num; i++) {
+    const isLast = i === num - 1;
+    const amt = isLast ? Math.round((grand - perPayment * (num - 1)) * 100) / 100 : perPayment;
+    datesHtml += `<div style="display:flex;gap:10px;align-items:center;padding:6px 0;font-size:.85rem;">
+      <span style="color:var(--text-1);min-width:110px;font-weight:600;">Payment ${i+1}</span>
+      <span style="color:var(--text-2);font-weight:600;min-width:80px;">${money(amt)}</span>
+      <label class="form-label" style="margin:0;font-size:.65rem;">Due</label>
+      <input type="date" class="form-input" id="instDate${i}" style="width:150px;padding:4px 8px;font-size:.82rem;">
+    </div>`;
+  }
+  area.innerHTML = datesHtml;
 }
 
 function openInternalBudget() {
@@ -2214,75 +2238,95 @@ function showInvoicePreview(inv) {
   $('invoiceModalTitle').textContent = inv.type === 'internal' ? 'Internal Budget' : 'Client Invoice';
 
   const invNum = 'INV-' + (inv.id || '').substring(0,6).toUpperCase();
-  let html = `<div class="invoice-preview" id="invoicePrintArea" style="font-family:'Rajdhani',sans-serif;font-weight:500;">
-    <!-- Header Bar -->
-    <div style="background:#1a1a1e;color:#fff;padding:24px 28px;border-radius:8px 8px 0 0;display:flex;justify-content:space-between;align-items:flex-start;">
-      <div>
-        <div style="font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:800;letter-spacing:1px;">${inv.fromCo ? esc(inv.fromCo) : 'INVOICE'}</div>
-        ${inv.fromName?`<div style="font-size:.9rem;margin-top:4px;color:#b8b8c8;">${esc(inv.fromName)}${inv.fromTitle?' · '+esc(inv.fromTitle):''}</div>`:''}
-        ${inv.fromEmail?`<div style="font-size:.82rem;color:#888898;">${esc(inv.fromEmail)}</div>`:''}
-      </div>
-      <div style="text-align:right;">
-        <div style="font-family:'Orbitron',sans-serif;font-size:.7rem;letter-spacing:2px;color:#888898;text-transform:uppercase;">${inv.type==='internal'?'Internal Budget':'Invoice'}</div>
-        <div style="font-family:'Orbitron',sans-serif;font-size:.85rem;color:#a855f7;margin-top:4px;">${invNum}</div>
+  const thStyle = "text-align:left;padding:10px 12px;font-family:'Orbitron',sans-serif;font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:#999;border-bottom:2px solid #e0e0e0;";
+  const tdStyle = "padding:12px;border-bottom:1px solid #f0f0f0;";
+
+  let html = `<div class="invoice-preview" id="invoicePrintArea" style="font-family:'Rajdhani',sans-serif;font-weight:500;padding:0;overflow:hidden;">
+    <!-- HEADER -->
+    <div style="background:linear-gradient(135deg,#1a1a1e 0%,#222228 100%);color:#fff;padding:28px 32px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:1px;">${inv.fromCo ? esc(inv.fromCo) : 'INVOICE'}</div>
+          ${inv.fromName?`<div style="font-size:.95rem;margin-top:6px;color:#c8c8d0;">${esc(inv.fromName)}${inv.fromTitle?' &mdash; '+esc(inv.fromTitle):''}</div>`:''}
+          ${inv.fromEmail?`<div style="font-size:.85rem;color:#888898;margin-top:2px;">${esc(inv.fromEmail)}</div>`:''}
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Orbitron',sans-serif;font-size:.6rem;letter-spacing:2.5px;color:#707080;text-transform:uppercase;">${inv.type==='internal'?'Internal Budget':'Invoice'}</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:1rem;color:#a855f7;margin-top:6px;font-weight:700;">${invNum}</div>
+          <div style="font-size:.82rem;color:#888898;margin-top:4px;">${inv.date||''}</div>
+        </div>
       </div>
     </div>
-    <!-- Info Row -->
-    <div style="display:flex;justify-content:space-between;padding:20px 28px;background:#f8f8fc;border-bottom:2px solid #e8e8ee;flex-wrap:wrap;gap:16px;">
-      <div>
-        ${inv.toName?`<div style="font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:#888;font-weight:600;">Bill To</div><div style="font-size:1rem;font-weight:700;color:#111;">${esc(inv.toName)}</div>`:''}
+
+    <!-- DETAILS GRID -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;background:#f8f8fc;border-bottom:2px solid #e8e8ee;">
+      <div style="padding:20px 32px;border-right:1px solid #e8e8ee;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:#999;margin-bottom:6px;">Bill To</div>
+        <div style="font-size:1.05rem;font-weight:700;color:#111;">${esc(inv.toName||inv.jobClient||'—')}</div>
+        ${inv.jobLocation?`<div style="font-size:.85rem;color:#666;margin-top:2px;">${esc(inv.jobLocation)}</div>`:''}
       </div>
-      <div style="text-align:right;font-size:.85rem;color:#555;">
-        <div>Date: <strong style="color:#111;">${inv.date||'—'}</strong></div>
-        ${inv.dueDate?`<div>Due: <strong style="color:#111;">${inv.dueDate}</strong></div>`:''}
-        ${inv.po?`<div>PO: <strong style="color:#111;">${esc(inv.po)}</strong></div>`:''}
+      <div style="padding:20px 32px;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:#999;margin-bottom:6px;">Job Details</div>
+        <div style="font-size:1.05rem;font-weight:700;color:#111;">${esc(inv.jobTitle||'')}</div>
+        <div style="font-size:.85rem;color:#666;margin-top:2px;">
+          ${inv.po?'PO: '+esc(inv.po):''}${inv.po && inv.dueDate?' &middot; ':''}${inv.dueDate?'Due: '+inv.dueDate:''}
+        </div>
+        ${inv.jobDate?`<div style="font-size:.82rem;color:#888;margin-top:2px;">Job Date: ${inv.jobDate}</div>`:''}
       </div>
     </div>
-    <!-- Line Items — always show scene breakdown with prices -->
-    <div style="padding:20px 28px;">`;
 
-  // Always show items with prices
-  html += `<table style="width:100%;border-collapse:collapse;"><thead><tr>
-    <th style="text-align:left;padding:8px 0;font-family:'Orbitron',sans-serif;font-size:.6rem;text-transform:uppercase;letter-spacing:1px;color:#888;border-bottom:2px solid #ddd;">Item</th>
-    ${inv.showDescriptions!==false?'<th style="text-align:left;padding:8px 0;font-family:\'Orbitron\',sans-serif;font-size:.6rem;text-transform:uppercase;letter-spacing:1px;color:#888;border-bottom:2px solid #ddd;">Description</th>':''}
-    <th style="text-align:right;padding:8px 0;font-family:'Orbitron',sans-serif;font-size:.6rem;text-transform:uppercase;letter-spacing:1px;color:#888;border-bottom:2px solid #ddd;">Amount</th>
-  </tr></thead><tbody>`;
-  inv.items.forEach(item => {
-    const price = item.price || item.clientPrice || 0;
-    html += `<tr>
-      <td style="padding:10px 0;font-weight:600;font-size:.95rem;border-bottom:1px solid #eee;">${esc(item.name)}</td>
-      ${inv.showDescriptions!==false?`<td style="padding:10px 0;font-size:.85rem;color:#666;border-bottom:1px solid #eee;">${esc((item.description||'').substring(0,120))}</td>`:''}
-      <td style="padding:10px 0;text-align:right;font-weight:700;font-size:.95rem;border-bottom:1px solid #eee;">${inv.showLineItems!==false ? money(price) : ''}</td>
-    </tr>`;
-  });
-  html += `</tbody></table>`;
-
-  // Totals
-  html += `<div style="margin-top:24px;margin-left:auto;max-width:280px;">`;
-  const subtotal = (inv.total||0) - (inv.taxAmt||0) - (inv.shipping||0);
-  html += `<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:.9rem;color:#555;"><span>Subtotal</span><span style="font-weight:600;color:#111;">${money(subtotal)}</span></div>`;
-  if (inv.shipping) html += `<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:.9rem;color:#555;"><span>Shipping</span><span style="font-weight:600;color:#111;">${money(inv.shipping)}</span></div>`;
-  if (inv.taxAmt) html += `<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:.9rem;color:#555;"><span>Tax (${inv.taxRate||0}%)</span><span style="font-weight:600;color:#111;">${money(inv.taxAmt)}</span></div>`;
-  html += `<div style="display:flex;justify-content:space-between;padding:12px 0 0;margin-top:8px;border-top:3px solid #1a1a1e;font-size:1.2rem;">
-    <span style="font-family:'Orbitron',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:1px;">TOTAL DUE</span>
-    <span style="font-weight:800;color:#111;">${money(inv.total)}</span></div>`;
-  html += `</div>`;
-
-  // Installment schedule
-  if (inv.installments && inv.installments.length > 1) {
-    html += `<div style="margin-top:28px;padding-top:20px;border-top:1px solid #ddd;">
-      <div style="font-family:'Orbitron',sans-serif;font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:10px;">Payment Schedule</div>
+    <!-- LINE ITEMS -->
+    <div style="padding:24px 32px;">
       <table style="width:100%;border-collapse:collapse;">
         <thead><tr>
-          <th style="text-align:left;padding:6px 0;font-size:.7rem;color:#888;border-bottom:1px solid #ddd;">Payment</th>
-          <th style="text-align:right;padding:6px 0;font-size:.7rem;color:#888;border-bottom:1px solid #ddd;">Amount</th>
-          <th style="text-align:right;padding:6px 0;font-size:.7rem;color:#888;border-bottom:1px solid #ddd;">Status</th>
+          <th style="${thStyle}">Item</th>
+          ${inv.showDescriptions!==false?`<th style="${thStyle}">Description</th>`:''}
+          <th style="${thStyle}text-align:right;">Amount</th>
+        </tr></thead>
+        <tbody>`;
+
+  inv.items.forEach((item, idx) => {
+    const price = item.price || item.clientPrice || 0;
+    const isLast = idx === inv.items.length - 1;
+    const borderStyle = isLast ? 'border-bottom:2px solid #e0e0e0;' : 'border-bottom:1px solid #f0f0f0;';
+    html += `<tr>
+      <td style="${tdStyle}${borderStyle}font-weight:600;font-size:.95rem;">${esc(item.name)}</td>
+      ${inv.showDescriptions!==false?`<td style="${tdStyle}${borderStyle}font-size:.85rem;color:#666;">${esc((item.description||'').substring(0,140))}</td>`:''}
+      <td style="${tdStyle}${borderStyle}text-align:right;font-weight:700;font-size:.95rem;">${inv.showLineItems!==false ? money(price) : ''}</td>
+    </tr>`;
+  });
+
+  html += `</tbody></table>
+
+      <!-- TOTALS -->
+      <div style="margin-top:20px;margin-left:auto;max-width:300px;">`;
+  const subtotal = (inv.total||0) - (inv.taxAmt||0) - (inv.shipping||0);
+  html += `<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:.9rem;color:#666;"><span>Subtotal</span><span style="font-weight:600;color:#222;">${money(subtotal)}</span></div>`;
+  if (inv.shipping) html += `<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:.9rem;color:#666;"><span>Shipping</span><span style="font-weight:600;color:#222;">${money(inv.shipping)}</span></div>`;
+  if (inv.taxAmt) html += `<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:.9rem;color:#666;"><span>Tax (${inv.taxRate||0}%)</span><span style="font-weight:600;color:#222;">${money(inv.taxAmt)}</span></div>`;
+  html += `<div style="display:flex;justify-content:space-between;padding:14px 0 0;margin-top:10px;border-top:3px solid #1a1a1e;">
+    <span style="font-family:'Orbitron',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:1.5px;">TOTAL DUE</span>
+    <span style="font-size:1.4rem;font-weight:800;color:#111;">${money(inv.total)}</span></div>`;
+  html += `</div>`;
+
+  // PAYMENT SCHEDULE
+  if (inv.installments && inv.installments.length > 1) {
+    html += `<div style="margin-top:32px;padding-top:20px;border-top:1px solid #e0e0e0;">
+      <div style="font-family:'Orbitron',sans-serif;font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:#999;margin-bottom:12px;">Payment Schedule</div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr>
+          <th style="${thStyle}">Payment</th>
+          <th style="${thStyle}">Due Date</th>
+          <th style="${thStyle}text-align:right;">Amount</th>
+          <th style="${thStyle}text-align:right;">Status</th>
         </tr></thead><tbody>`;
     inv.installments.forEach(inst => {
+      const isPaid = inst.status === 'paid';
       html += `<tr>
-        <td style="padding:8px 0;font-size:.9rem;border-bottom:1px solid #eee;">${esc(inst.label)}</td>
-        <td style="padding:8px 0;text-align:right;font-weight:600;font-size:.9rem;border-bottom:1px solid #eee;">${money(inst.amount)}</td>
-        <td style="padding:8px 0;text-align:right;font-size:.82rem;border-bottom:1px solid #eee;color:${inst.status==='paid'?'#22c55e':'#888'};">${inst.status==='paid'?'Paid':'Due'}</td>
+        <td style="${tdStyle}font-weight:600;">${esc(inst.label)}</td>
+        <td style="${tdStyle}color:#666;">${inst.dueDate || '—'}</td>
+        <td style="${tdStyle}text-align:right;font-weight:700;">${money(inst.amount)}</td>
+        <td style="${tdStyle}text-align:right;"><span style="display:inline-block;padding:2px 8px;border-radius:3px;font-size:.75rem;font-weight:600;background:${isPaid?'#dcfce7':'#fef3c7'};color:${isPaid?'#166534':'#92400e'};">${isPaid?'Paid':'Due'}</span></td>
       </tr>`;
     });
     html += `</tbody></table></div>`;
