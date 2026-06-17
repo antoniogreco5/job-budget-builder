@@ -662,6 +662,7 @@ a:hover { text-decoration:underline; color:var(--purple-bright); }
     <div class="modal-body">
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
         <input type="text" class="form-input" id="catalogSearch" placeholder="Search materials..." oninput="renderCatalog()" style="flex:2;min-width:140px;">
+        <select class="form-select" id="catalogSourceFilter" onchange="onCatalogSourceChange()" style="flex:1;min-width:120px;"><option value="">All Sources</option></select>
         <select class="form-select" id="catalogCategoryFilter" onchange="renderCatalog()" style="flex:1;min-width:120px;"><option value="">All Categories</option></select>
         <select class="form-select" id="catalogVendorFilter" onchange="renderCatalog()" style="flex:1;min-width:120px;"><option value="">All Vendors</option></select>
         <label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;color:var(--text-2);cursor:pointer;white-space:nowrap;"><input type="checkbox" id="catalogFavOnly" onchange="renderCatalog()"> Favs</label>
@@ -757,6 +758,29 @@ let currentJobId = null;
 let currentItemIdx = 0;
 let selectedSpecialty = null;
 let db = null;
+
+// ===== IMPORTED REFERENCE CATALOG (Sculpt / Frends / Wardrobe) =====
+// Loaded at runtime from a static file. Kept SEPARATE from `settings` so it is
+// never written back to Firestore (the per-user doc has a 1 MiB limit and this
+// library is ~20k items). Read-only browse/pick source; picking copies values.
+let importedCatalog = [];
+function getAllMaterials() {
+  return settings.materials.concat(settings.customMaterials || []).concat(importedCatalog);
+}
+async function loadImportedCatalog() {
+  if (importedCatalog.length) return;
+  try {
+    const res = await fetch('catalog-data.json', { cache: 'force-cache' });
+    if (res.ok) {
+      importedCatalog = await res.json();
+      // refresh catalog modal if it happens to be open
+      if (document.getElementById('catalogModal') &&
+          document.getElementById('catalogModal').classList.contains('active')) {
+        populateCatalogFilters(); renderCatalog();
+      }
+    }
+  } catch (e) { console.warn('catalog-data.json load failed:', e); }
+}
 
 // ===== FIREBASE CONFIG =====
 const firebaseConfig = {
@@ -1866,9 +1890,11 @@ function showMatDropdown() {
   const input = $('matSearchInput');
   const q = (input.value || '').toLowerCase();
   const dd = $('matDropdown');
-  const allMats = settings.materials.concat(settings.customMaterials || []);
   const favs = settings.favorites || [];
-  const filtered = q ? allMats.filter(m => m.name.toLowerCase().includes(q)) : allMats;
+  // With no query, show only the curated library (fast). Once the user types,
+  // search the full set including the imported reference catalog (~20k items).
+  const curated = settings.materials.concat(settings.customMaterials || []);
+  const filtered = q ? getAllMaterials().filter(m => m.name.toLowerCase().includes(q)) : curated;
 
   // Group by base name
   const groups = groupMaterials(filtered);
@@ -1918,7 +1944,7 @@ function addMaterialFromCatalog(catId) {
   const j = getJob(); if (!j) return;
   const targetIdx = currentItemIdx === -1 ? 0 : currentItemIdx; // Overview → General item
   const item = j.items[targetIdx]; if (!item) return;
-  const allMats = settings.materials.concat(settings.customMaterials || []);
+  const allMats = getAllMaterials();
   const mat = allMats.find(m => m.id === catId);
   if (!mat) return;
   item.materials.push({ id:uid(), name:mat.name, unitCost:mat.unitCost, qty:1, waste:0, size:mat.size||'', catalogId:catId });
@@ -2613,33 +2639,51 @@ function openCatalogModal() {
 function closeCatalogModal() { $('catalogModal').classList.remove('active'); }
 
 function populateCatalogFilters() {
-  const allMats = settings.materials.concat(settings.customMaterials || []);
-  const cats = [...new Set(allMats.map(m => m.category).filter(Boolean))].sort();
-  const vendors = [...new Set(allMats.map(m => m.vendor).filter(Boolean))].sort();
-  $('catalogCategoryFilter').innerHTML = '<option value="">All Categories</option>' + cats.map(c => `<option value="${c}">${c}</option>`).join('');
-  $('catalogVendorFilter').innerHTML = '<option value="">All Vendors</option>' + vendors.map(v => `<option value="${v}">${v}</option>`).join('');
+  const allMats = getAllMaterials();
+  const srcSel = $('catalogSourceFilter');
+  const curSrc = srcSel.value;
+  const sources = [...new Set(allMats.map(m => m.source || 'Budgify'))].sort();
+  srcSel.innerHTML = '<option value="">All Sources</option>' +
+    sources.map(s => `<option value="${esc(s)}"${s===curSrc?' selected':''}>${esc(s)}</option>`).join('');
+  // Scope category + vendor lists to the selected source (dependent filters)
+  const scoped = curSrc ? allMats.filter(m => (m.source || 'Budgify') === curSrc) : allMats;
+  const cats = [...new Set(scoped.map(m => m.category).filter(Boolean))].sort();
+  const vendors = [...new Set(scoped.map(m => m.vendor).filter(Boolean))].sort();
+  $('catalogCategoryFilter').innerHTML = '<option value="">All Categories</option>' + cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  $('catalogVendorFilter').innerHTML = '<option value="">All Vendors</option>' + vendors.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
 }
+
+function onCatalogSourceChange() { populateCatalogFilters(); renderCatalog(); }
 
 function renderCatalog() {
   const q = ($('catalogSearch').value || '').toLowerCase();
+  const src = $('catalogSourceFilter').value;
   const cat = $('catalogCategoryFilter').value;
   const vendor = $('catalogVendorFilter').value;
   const favOnly = $('catalogFavOnly').checked;
-  const allMats = settings.materials.concat(settings.customMaterials || []);
+  const allMats = getAllMaterials();
   const favs = settings.favorites || [];
 
   let filtered = allMats;
+  if (src) filtered = filtered.filter(m => (m.source || 'Budgify') === src);
   if (q) filtered = filtered.filter(m => m.name.toLowerCase().includes(q));
   if (cat) filtered = filtered.filter(m => m.category === cat);
   if (vendor) filtered = filtered.filter(m => m.vendor === vendor);
   if (favOnly) filtered = filtered.filter(m => favs.includes(m.id));
 
-  $('catalogCount').textContent = `(${filtered.length} of ${allMats.length})`;
-  $('catalogTableBody').innerHTML = filtered.map(m => {
+  // Cap rendered rows — the imported library can be ~20k items; rendering all
+  // would freeze the table. Filters/search narrow it down.
+  const CAP = 300;
+  const shown = filtered.slice(0, CAP);
+  $('catalogCount').textContent = filtered.length > CAP
+    ? `(showing ${CAP} of ${filtered.length.toLocaleString()} — refine search/filters)`
+    : `(${filtered.length} of ${allMats.length.toLocaleString()})`;
+  $('catalogTableBody').innerHTML = shown.map(m => {
     const isFav = favs.includes(m.id);
+    const srcBadge = m.source ? `<span style="font-size:.66rem;color:var(--text-3);"> · ${esc(m.source)}</span>` : '';
     return `<tr>
       <td><span style="cursor:pointer;" onclick="toggleFavorite('${m.id}')">${isFav?'⭐':'☆'}</span></td>
-      <td>${esc(m.name)}</td><td style="font-size:0.78rem;color:var(--text-2);">${esc(m.category||'')}</td>
+      <td>${esc(m.name)}${srcBadge}</td><td style="font-size:0.78rem;color:var(--text-2);">${esc(m.category||'')}</td>
       <td style="font-size:0.78rem;">${esc(m.size||'')}</td>
       <td class="num">${money(m.unitCost)}</td><td style="font-size:0.78rem;">${esc(m.vendor||'')}</td></tr>`;
   }).join('');
@@ -2746,6 +2790,7 @@ if ('serviceWorker' in navigator) {
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
   initFirebase();
+  loadImportedCatalog();
 });
 
 // Close dropdowns when clicking outside
