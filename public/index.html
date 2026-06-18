@@ -489,6 +489,157 @@ body::after {
 /* --- Scrollbar: subtle metallic thumb --- */
 ::-webkit-scrollbar-thumb { background:linear-gradient(180deg, var(--border-bright), var(--border-light)); border-radius:4px; }
 ::-webkit-scrollbar-thumb:hover { background:linear-gradient(180deg, var(--chrome-dark), var(--border-bright)); }
+
+/* ==================================================== */
+/* v6.1 BOLD — make the upgrade unmistakable (still visual-only) */
+/* ==================================================== */
+
+/* Structured "blueprint" surface + stronger ambient light */
+body {
+  background-image:
+    radial-gradient(ellipse at 16% -8%, rgba(147,51,234,0.18) 0%, transparent 52%),
+    radial-gradient(ellipse at 88% 112%, rgba(220,38,38,0.13) 0%, transparent 52%),
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 38px 38px, 38px 38px;
+}
+
+/* Cards: real elevation, contrast, brighter edge */
+.card {
+  background: linear-gradient(180deg, #1e1e25 0%, #16161b 100%);
+  border:1px solid var(--border-light);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 12px 34px -10px rgba(0,0,0,.75), 0 0 44px -14px var(--purple-glow);
+}
+.item-card, .editor-panel, .item-header {
+  background: linear-gradient(180deg, #1c1c22 0%, #16161b 100%);
+  border-color: var(--border-light);
+}
+
+/* Top-bar power rail: thicker + lit */
+.top-bar::before { height:4px; box-shadow:0 0 16px var(--purple-glow); }
+
+/* Primary / secondary buttons: sheen sweep on hover */
+.btn-primary, .btn-secondary { position:relative; overflow:hidden; }
+.btn-primary::after, .btn-secondary::after {
+  content:''; position:absolute; top:0; bottom:0; left:-75%; width:50%; opacity:0; pointer-events:none;
+  background:linear-gradient(100deg, transparent, rgba(255,255,255,.45), transparent); transform:skewX(-18deg);
+}
+.btn-primary:hover::after, .btn-secondary:hover::after { animation: btnSheen 700ms ease; }
+@keyframes btnSheen { 0% { left:-75%; opacity:0 } 18% { opacity:1 } 100% { left:135%; opacity:0 } }
+
+/* Item-header cost figures: bigger */
+.item-header-costs .ihc-value { font-size:1.35rem; }
+.item-header-costs .ihc-label { font-size:.6rem; }
+
+/* ===== Control-panel totals readout (budget info bar) ===== */
+.totals-readout { display:flex; flex-wrap:wrap; gap:0; background:linear-gradient(180deg,#202028,#17171c); border:1px solid var(--border-bright); border-radius:var(--radius-md); overflow:hidden; position:relative; box-shadow: inset 0 1px 0 rgba(255,255,255,.06), var(--shadow-md), 0 0 34px -12px var(--purple-glow); }
+.totals-readout::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, var(--red-primary), var(--purple-primary), var(--chrome-mid)); box-shadow:0 0 12px var(--purple-glow); }
+.tr-job { display:flex; gap:16px; flex-wrap:wrap; padding:12px 16px; flex:1; min-width:280px; align-items:center; font-size:.85rem; border-right:1px solid var(--border); }
+.tr-job .tr-jobname { color:var(--text-2); } .tr-job strong { color:var(--chrome-light); }
+.tr-cells { display:flex; flex-wrap:wrap; }
+.tr-cell { padding:10px 18px; text-align:center; border-right:1px solid var(--border); min-width:104px; }
+.tr-cell:last-child { border-right:none; }
+.tr-label { font-family:var(--font-display); font-size:.56rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--chrome-mid); margin-bottom:3px; }
+.tr-value { font-family:var(--font-body); font-size:1.4rem; font-weight:700; color:var(--chrome-light); line-height:1; font-variant-numeric:tabular-nums; letter-spacing:.3px; }
+.tr-cell.tr-client { background:rgba(147,51,234,.08); }
+.tr-cell.tr-client .tr-value { font-size:1.55rem; background:var(--chrome-gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 0 22px rgba(147,51,234,.4); }
+.tr-cell.tr-profit .tr-value { color:var(--green); text-shadow:0 0 18px var(--green-glow); }
+@media (max-width:640px){ .tr-cell{ min-width:33%; flex:1; } }
+
+/* Keep the textured surface out of print/invoices */
+@media print { body { background-image:none !important; } body::after { display:none !important; } }
+
+/* ==================================================== */
+/* v6.2 DRASTIC — powered-on tactical HUD (visual only, workflow unchanged) */
+/* ==================================================== */
+
+/* Lift the whole surface palette so panels separate hard from the background */
+:root {
+  --bg-2:#1c1c24; --bg-3:#26262f; --bg-4:#32323d;
+  --border:#34343f; --border-light:#464652; --border-bright:#5e5e6c;
+  --purple-glow:rgba(168,85,247,0.55); --red-glow:rgba(239,68,68,0.5); --green-glow:rgba(34,197,94,0.45);
+}
+
+/* Charged background: layered glows + visible purple grid */
+body {
+  background-image:
+    radial-gradient(ellipse at 50% -25%, rgba(147,51,234,0.24) 0%, transparent 60%),
+    radial-gradient(ellipse at 0% 105%, rgba(220,38,38,0.16) 0%, transparent 52%),
+    radial-gradient(ellipse at 100% 110%, rgba(147,51,234,0.16) 0%, transparent 52%),
+    linear-gradient(rgba(168,85,247,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168,85,247,0.05) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 42px 42px, 42px 42px;
+}
+
+/* Panels: glow ring border + brighter surface + deep shadow */
+.card, .feature-card {
+  background: linear-gradient(180deg, #272730 0%, #1a1a22 100%);
+  border:1px solid var(--border-bright);
+  box-shadow: 0 0 0 1px rgba(168,85,247,.20), 0 0 38px -8px var(--purple-glow), 0 20px 46px -14px #000, inset 0 1px 0 rgba(255,255,255,.09);
+}
+.item-card, .editor-panel, .item-header {
+  background: linear-gradient(180deg, #242431 0%, #191921 100%);
+  border:1px solid var(--border-light);
+  box-shadow: 0 0 30px -10px var(--purple-glow), 0 14px 34px -12px #000, inset 0 1px 0 rgba(255,255,255,.07);
+}
+
+/* Top bar: brighter, lit, with a live flowing power-rail */
+.top-bar { background:linear-gradient(180deg,#212129,#141419); border-color:var(--border-bright); box-shadow:0 0 54px -10px var(--purple-glow), var(--shadow-lg); }
+.top-bar::before {
+  height:5px;
+  background:linear-gradient(90deg,var(--red-primary),var(--purple-primary),var(--chrome-bright),var(--purple-primary),var(--red-primary));
+  background-size:200% 100%; animation: railFlow 6s linear infinite; box-shadow:0 0 22px var(--purple-glow);
+}
+@keyframes railFlow { to { background-position:-200% 0 } }
+.top-bar-brand span { font-size:1.3rem; letter-spacing:1.5px; }
+.top-bar-brand img { width:40px; height:40px; }
+
+/* Typography: louder titles */
+h1 { font-size:2.1rem; letter-spacing:1px; }
+h2 { font-size:1.55rem; }
+.landing-hero h1 { font-size:3rem; text-shadow:0 0 44px rgba(147,51,234,.45); }
+.landing-hero p { font-size:1.2rem; }
+
+/* Buttons: bigger, persistent glow */
+.btn { font-size:.98rem; padding:9px 18px; font-weight:700; }
+.btn-lg { padding:13px 26px; font-size:1.06rem; }
+.btn-primary { box-shadow:0 0 26px var(--red-glow), inset 0 1px 0 rgba(255,255,255,.25); }
+.btn-secondary { box-shadow:0 0 26px var(--purple-glow), inset 0 1px 0 rgba(255,255,255,.25); }
+.btn-primary:hover:not(:disabled) { box-shadow:0 0 40px var(--red-glow), var(--shadow-md); transform:translateY(-1px); }
+.btn-secondary:hover:not(:disabled) { box-shadow:0 0 40px var(--purple-glow), var(--shadow-md); transform:translateY(-1px); }
+
+/* Totals readout: command-console scale + glow */
+.totals-readout { border:1px solid var(--border-bright); background:linear-gradient(180deg,#28283340,#17171d), linear-gradient(180deg,#262630,#17171d); box-shadow: inset 0 1px 0 rgba(255,255,255,.09), 0 0 50px -10px var(--purple-glow), var(--shadow-md); }
+.totals-readout::before { height:4px; box-shadow:0 0 20px var(--purple-glow); }
+.tr-label { font-size:.6rem; color:var(--chrome-light); }
+.tr-value { font-size:1.7rem; }
+.tr-cell.tr-client { background:rgba(147,51,234,.18); box-shadow:inset 0 0 30px rgba(147,51,234,.22); }
+.tr-cell.tr-client .tr-value { font-size:2rem; }
+.tr-cell.tr-profit .tr-value { font-size:1.85rem; }
+
+/* Item-header cost figures: bigger still */
+.item-header-costs .ihc-value { font-size:1.6rem; }
+
+/* Tabs / pills / editor tabs: glowing active states */
+.tab-btn.active { color:#fff; box-shadow:0 0 18px var(--purple-glow); background:linear-gradient(180deg,#2a2a36,#1a1a22); }
+.item-pill.active { box-shadow:0 0 20px var(--purple-glow); }
+.editor-tab.active { box-shadow:0 -3px 18px -4px var(--purple-glow); }
+
+/* Tables: brighter header rule + stronger row hover */
+.tbl th { color:var(--chrome-light); border-bottom:2px solid var(--purple-primary); }
+.tbl tbody tr:hover { background:rgba(147,51,234,.13); }
+
+/* Job cards on dashboard: glow on hover */
+.job-list-item { background:linear-gradient(180deg,#232331,#181820); border:1px solid var(--border-light); }
+.job-list-item:hover { border-color:var(--purple-light); box-shadow:0 0 30px -6px var(--purple-glow), var(--shadow-md); transform:translateY(-2px); }
+.job-list-item .jli-amount { font-size:1.2rem; }
+
+/* Inputs: deeper wells, brighter edges */
+.form-input, .form-select, .form-textarea, .scope-area { background:#101015; border-color:var(--border-bright); }
+
+/* Specialty cards (onboarding): glow */
+.specialty-card { background:linear-gradient(180deg,#242431,#191921); }
+.specialty-card.selected { box-shadow:0 0 36px var(--purple-glow), inset 0 0 30px rgba(147,51,234,.15); }
 </style>
 </head>
 <body>
@@ -1652,35 +1803,18 @@ function renderBudgetInfoBar() {
   const j = getJob(); if (!j) return;
   const t = calcJobTotal(j);
   $('budgetInfoBar').innerHTML = `
-    <div style="display:flex;flex-wrap:wrap;gap:0;background:var(--bg-3);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow),var(--shadow-glow);">
-      <!-- Job info row -->
-      <div style="display:flex;gap:16px;flex-wrap:wrap;padding:8px 14px;flex:1;min-width:300px;align-items:center;font-size:.82rem;border-right:1px solid var(--border);">
-        <span style="color:var(--text-2);">Job: <strong style="color:var(--chrome-light);">${esc(j.title||'Untitled')}</strong></span>
-        ${j.client?`<span style="color:var(--text-2);">Client: <strong style="color:var(--chrome-light);">${esc(j.client)}</strong></span>`:''}
-        ${j.date?`<span style="color:var(--text-2);">${j.date}</span>`:''}
+    <div class="totals-readout">
+      <div class="tr-job">
+        <span class="tr-jobname">Job: <strong>${esc(j.title||'Untitled')}</strong></span>
+        ${j.client?`<span class="tr-jobname">Client: <strong>${esc(j.client)}</strong></span>`:''}
+        ${j.date?`<span class="tr-jobname">${j.date}</span>`:''}
       </div>
-      <!-- Running totals row -->
-      <div style="display:flex;gap:0;flex-wrap:wrap;">
-        <div style="padding:8px 14px;text-align:center;border-right:1px solid var(--border);min-width:90px;">
-          <div style="font-family:var(--font-display);font-size:.5rem;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--chrome-mid);">Materials</div>
-          <div style="font-size:.95rem;font-weight:700;color:var(--chrome-light);">${money(t.materialCost)}</div>
-        </div>
-        <div style="padding:8px 14px;text-align:center;border-right:1px solid var(--border);min-width:90px;">
-          <div style="font-family:var(--font-display);font-size:.5rem;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--chrome-mid);">Labor</div>
-          <div style="font-size:.95rem;font-weight:700;color:var(--chrome-light);">${money(t.laborCost)}</div>
-        </div>
-        <div style="padding:8px 14px;text-align:center;border-right:1px solid var(--border);min-width:90px;">
-          <div style="font-family:var(--font-display);font-size:.5rem;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--chrome-mid);">Your Cost</div>
-          <div style="font-size:.95rem;font-weight:700;color:var(--chrome-light);">${money(t.totalCost)}</div>
-        </div>
-        <div style="padding:8px 14px;text-align:center;border-right:1px solid var(--border);min-width:90px;">
-          <div style="font-family:var(--font-display);font-size:.5rem;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--chrome-mid);">Client</div>
-          <div style="font-size:.95rem;font-weight:700;background:var(--chrome-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${money(t.clientTotal)}</div>
-        </div>
-        <div style="padding:8px 14px;text-align:center;min-width:90px;">
-          <div style="font-family:var(--font-display);font-size:.5rem;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--chrome-mid);">Profit</div>
-          <div style="font-size:.95rem;font-weight:700;color:var(--green);">${money(t.profit)}</div>
-        </div>
+      <div class="tr-cells">
+        <div class="tr-cell"><div class="tr-label">Materials</div><div class="tr-value">${money(t.materialCost)}</div></div>
+        <div class="tr-cell"><div class="tr-label">Labor</div><div class="tr-value">${money(t.laborCost)}</div></div>
+        <div class="tr-cell"><div class="tr-label">Your Cost</div><div class="tr-value">${money(t.totalCost)}</div></div>
+        <div class="tr-cell tr-client"><div class="tr-label">Client</div><div class="tr-value">${money(t.clientTotal)}</div></div>
+        <div class="tr-cell tr-profit"><div class="tr-label">Profit</div><div class="tr-value">${money(t.profit)}</div></div>
       </div>
     </div>`;
 }
